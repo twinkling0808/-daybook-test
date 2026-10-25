@@ -45,11 +45,6 @@
   --accent:#5e4a9a; --accent-ink:#ffffff; --link:#5e4a9a; --amber:#9b5300; --amber-bg:#fbeed9; --danger:#b3392f;
   --shadow:0 1px 2px rgba(0,0,0,.04),0 6px 20px rgba(0,0,0,.05);
 }
-[data-theme="daybook"]{
-  --bg:#f6f1e7; --surface:#fbf8f1; --text:#27243c; --muted:#615d76; --line:#e6dccb; --hover:#efe7d8;
-  --accent:#33304f; --accent-ink:#ffffff; --link:#964b31; --amber:#9b5300; --amber-bg:#fbeed9; --danger:#b3392f;
-  --shadow:0 1px 2px rgba(0,0,0,.04),0 6px 20px rgba(0,0,0,.05);
-}
 [data-theme="olive"]{
   --bg:#ecede0; --surface:#f5f5ea; --text:#222518; --muted:#5a5f41; --line:#d5d9bf; --hover:#e1e4cd;
   --accent:#4f562c; --accent-ink:#ffffff; --link:#4f562c; --amber:#9b5300; --amber-bg:#fbeed9; --danger:#ac372d;
@@ -75,7 +70,7 @@
   --accent:#94cca6; --accent-ink:#111111; --link:#94cca6; --amber:#f0b05a; --amber-bg:#3a2e1b; --danger:#f08d84;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 6px 20px rgba(0,0,0,.3); color-scheme:dark;
 }
-[data-theme="daybooknight"]{
+[data-theme="daybook"]{
   --bg:#2a2741; --surface:#33304f; --text:#ffffff; --muted:#bdb6d3; --line:#47436a; --hover:#3b3859;
   --accent:#f5a257; --accent-ink:#111111; --link:#f5a257; --amber:#f0b05a; --amber-bg:#3a2e1b; --danger:#f19289;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 6px 20px rgba(0,0,0,.3); color-scheme:dark;
@@ -1020,7 +1015,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER = '20261025-4';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER = '20261025-5';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -1062,15 +1057,14 @@ const THEMES = [
   { id: 'ocean', name: '오션', bg: '#eef4f8', tx: '#1f3243', ac: '#28648f' },
   { id: 'lavender', name: '라벤더', bg: '#f4f1fa', tx: '#2f2943', ac: '#5e4a9a' },
   { id: 'olive', name: '올리브', bg: '#ecede0', tx: '#2f3322', ac: '#4f562c' },
-  { id: 'daybook', name: '데이북', bg: '#f6f1e7', tx: '#33304f', ac: '#33304f' },
   { id: 'dark', name: '다크', bg: '#191919', tx: '#ececea', ac: '#ececea' },
   { id: 'midnight', name: '미드나이트', bg: '#0f1626', tx: '#e4eaf6', ac: '#9bbcf3' },
   { id: 'mocha', name: '모카', bg: '#1d1814', tx: '#efe5d9', ac: '#dfbc92' },
   { id: 'forest', name: '포레스트', bg: '#121a16', tx: '#e4efe4', ac: '#94cca6' },
-  { id: 'daybooknight', name: '데이북 밤', bg: '#2a2741', tx: '#f6f1e7', ac: '#f5a257' }
+  { id: 'daybook', name: '데이북', bg: '#2a2741', tx: '#f6f1e7', ac: '#f5a257' }   // 앱 아이콘 색(남색·크림·주황)
 ];
 const ACCENTS = [['#c0563f', '테라코타'], ['#d9730d', '앰버'], ['#b8962e', '머스터드'], ['#5b8a5a', '초록'], ['#2f8f8a', '청록'], ['#3b6ea5', '파랑'], ['#6c58a8', '보라'], ['#c2527a', '핑크'], ['#6b6b6b', '그레이']];
-const themeById = id => THEMES.find(t => t.id === id) || THEMES[0];
+const themeById = id => THEMES.find(t => t.id === (id === 'daybooknight' ? 'daybook' : id)) || THEMES[0];   // 'daybooknight'는 시험판에서만 잠깐 쓴 이름
 let accentColor = null;
 const lum = hex => { const n = parseInt(hex.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255].map(c => { c /= 255; return c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; }).reduce((a, c, i) => a + c * [.2126, .7152, .0722][i], 0); };
 const contrast = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
