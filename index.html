@@ -798,6 +798,7 @@ body.locked #lock{display:flex}
 
       <details class="sect"><summary>주제(노트북) · 글쓰기 틀</summary><div class="body" id="nbManage"></div></details>
       <details class="sect"><summary>태그 관리</summary><div class="body" id="tagManage"></div></details>
+      <details class="sect"><summary>사진 위치 추정</summary><div class="body" id="photoLocBox"></div></details>
       <details class="sect"><summary>데이터 안전</summary><div class="body" id="safeBox"></div></details>
 
       <details class="sect"><summary>백업 · 복원</summary><div class="body">
@@ -1195,7 +1196,7 @@ function useGps() {
   navigator.geolocation.getCurrentPosition(async p => {
     L.lat = p.coords.latitude; L.lon = p.coords.longitude;
     try { L.place = await reverseGeo(L.lat, L.lon); } catch { L.place = `${L.lat.toFixed(3)}, ${L.lon.toFixed(3)}`; }
-    setLocStatus(''); renderLoc(); saveLastLoc(); refreshWeather();
+    setLocStatus(''); renderLoc(); saveLastLoc(); refreshWeather(); addPing(L.lat, L.lon, L.place);
   }, err => {
     setLocStatus(err.code === 1 ? '위치 권한이 꺼져 있어요. 직접 입력하거나 권한을 허용해 주세요.' : '현재 위치를 가져오지 못했어요. 직접 입력해 주세요.');
   }, { timeout: 10000, maximumAge: 300000 });
@@ -1370,16 +1371,71 @@ async function parsePdf(file) {
   const m = str.match(/\/CreationDate\s*\(D:(\d{4})(\d\d)(\d\d)(\d\d)?(\d\d)?(\d\d)?/);
   return m ? { ts: new Date(+m[1], m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0), +(m[6] || 0)).getTime() } : {};
 }
+/* 사진에 위치가 없을 때: 촬영 시각과 가장 가까운 기록(쓴 글·위치 발자국)의 장소를 후보로 찾아요 (3시간 이내 우선, 없으면 같은 날) */
+function guessPlace(ts) {
+  if (!ts) return null;
+  let best = null;
+  const take = (o, src) => { const gap = Math.abs(o.ts - ts); if (!best || gap < best.gap) best = { lat: o.lat, lon: o.lon, place: o.place || '', srcTs: o.ts, src, gap }; };
+  for (const e of S.entries) { if (e.lat != null && e.lon != null && e.place && e.ts && e.id !== D.editId) take(e, 'entry'); }
+  for (const q of LP) { if (q.lat != null && q.ts) take(q, 'ping'); }
+  if (!best) return null;
+  if (best.gap <= 3 * 3600e3 || ymd(best.srcTs) === ymd(ts)) return best;
+  return null;
+}
+/* 위치 발자국: 설정에서 켠 경우에만, 앱을 열 때 지금 위치를 폰 안(meta 'locpings')에만 기록해요. 백업에는 들어가지 않아요. */
+const PING_KEY = 'lifeos-locping';
+let LP = [];
+const pingEnabled = () => lsGet(PING_KEY) === '1';
+async function loadPings() { try { const v = ((await DB.all('meta')).find(m => m.k === 'locpings') || {}).v; LP = Array.isArray(v) ? v : []; } catch { LP = []; } }
+function distM(a, b) { const r = Math.PI / 180, dl = (b.lat - a.lat) * r, dn = (b.lon - a.lon) * r, x = Math.sin(dl / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dn / 2) ** 2; return 2 * 6371e3 * Math.asin(Math.sqrt(x)); }
+function addPing(lat, lon, place) {
+  if (!pingEnabled() || lat == null || lon == null) return;
+  const now = Date.now(), last = LP[LP.length - 1];
+  if (last && now - last.ts < 15 * 60e3 && distM(last, { lat, lon }) < 300) return;
+  LP.push({ ts: now, lat, lon, place: place || '' });
+  const cut = now - 90 * 86400e3; LP = LP.filter(q => q.ts >= cut).slice(-3000);
+  saveMeta('locpings', LP).catch(() => {});
+  if ($('#photoLocBox')) renderPhotoLocBox();
+}
+function pingNow(force) {
+  if (!pingEnabled() || !navigator.geolocation) return;
+  const last = LP[LP.length - 1]; if (!force && last && Date.now() - last.ts < 15 * 60e3) return;
+  navigator.geolocation.getCurrentPosition(async p => {
+    const lat = p.coords.latitude, lon = p.coords.longitude;
+    const near = LP.slice().reverse().find(q => q.place && distM(q, { lat, lon }) < 150);
+    let place = near ? near.place : '';
+    if (!place) { try { place = await Promise.race([reverseGeo(lat, lon), new Promise((_, r) => setTimeout(r, 5000))]); } catch {} }
+    addPing(lat, lon, place);
+  }, () => {}, { timeout: 15000, maximumAge: 120000 });
+}
+function renderPhotoLocBox() {
+  const box = $('#photoLocBox'); if (!box) return;
+  const on = pingEnabled(), n = LP.length, last = LP[n - 1];
+  box.innerHTML = `<p class="small muted" style="margin:0 0 6px">안드로이드 폰은 갤러리 사진의 위치를 웹앱에 넘겨주지 않아요. 그래서 사진에 위치가 없으면 촬영 시각과 가까운 기록의 장소를 후보로 보여줘요.</p>
+    <div class="setrow"><div><div class="lab">위치 발자국 남기기</div><div class="desc">앱을 열 때 지금 위치를 이 폰 안에만 기록해 후보를 더 정확하게 해요 (최근 90일, 백업에는 안 들어가요)</div></div><button class="btn ${on ? '' : 'primary'}" data-act="${on ? 'pingOff' : 'pingOn'}">${on ? '끄기' : '켜기'}</button></div>
+    ${n ? `<div class="setrow"><div><div class="lab">쌓인 발자국 ${n}개</div><div class="desc">최근: ${ymd(last.ts)} ${hm(last.ts)}${last.place ? ' · ' + esc(last.place) : ''}</div></div><button class="btn ghost" data-act="pingClear">지우기</button></div>` : ''}`;
+}
+async function pingAct(a) {
+  if (a === 'pingOn') { lsSet(PING_KEY, '1'); toast('위치 발자국을 켰어요'); pingNow(true); }
+  else if (a === 'pingOff') { lsSet(PING_KEY, '0'); toast('위치 발자국을 껐어요 (쌓인 기록은 남아 있어요)'); }
+  else if (a === 'pingClear') { if (!await askConfirm('발자국 지우기', `쌓인 위치 발자국 ${LP.length}개를 지울까요? 일기 글에는 영향이 없어요.`, '지우기', true)) return; LP = []; await DB.del('meta', 'locpings').catch(() => {}); toast('발자국을 지웠어요'); }
+  renderPhotoLocBox();
+}
 /* 사진의 촬영 일시·위치를 보여주고, 사용자가 허락하면 적용 */
 async function askPhotoInfo(name, m, kind) {
   const full = ts => { const d = new Date(ts); return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ${DOWS1[d.getDay()]}요일 ${hm(ts)}`; };
   if (m.lat != null && !m.place) { try { m.place = await Promise.race([reverseGeo(m.lat, m.lon), new Promise((_, r) => setTimeout(r, 4000))]); } catch { m.place = `${m.lat.toFixed(3)}, ${m.lon.toFixed(3)}`; } }
   const lines = [];
   if (m.ts) lines.push(`${kind === 'mtime' ? '파일 수정일' : '촬영 일시'}: ${full(m.ts)}`);
-  if (m.lat != null) lines.push(`촬영 위치: ${m.place}`);
+  if (m.guess) lines.push(`촬영 위치: 사진에 없음`, `추정 위치: ${m.place}`, `  (${full(m.guess.srcTs)} ${m.guess.src === 'ping' ? '위치 발자국' : '쓴 글'} 기준)`);
+  else if (m.lat != null) lines.push(`촬영 위치: ${m.place}`);
+  else if (kind === 'exif') lines.push('촬영 위치: 사진에 없음 (지금 위치 유지)');
   const cur = infoLineText(draftTs(), L.place, null).join(' · ');
+  const buttons = m.guess
+    ? [{ label: '그대로 두기', value: false }, { label: '날짜만', value: 'date' }, { label: '모두 적용', value: true, primary: true }]
+    : [{ label: '그대로 두기', value: false }, { label: '적용하기', value: true, primary: true }];
   return modal({ title: '사진 정보를 적용할까요?', message: `${name}\n\n${lines.join('\n')}\n\n지금 설정: ${cur}\n\n적용하면 시간·위치가 바뀌고 날씨도 그 시점으로 다시 불러와요.`,
-    buttons: [{ label: '그대로 두기', value: false }, { label: '적용하기', value: true, primary: true }], cancelValue: false });
+    buttons, cancelValue: false });
 }
 async function applyMeta(m, tag) {
   if (m.ts) { $('#dDate').value = ymd(m.ts); $('#dTime').value = hm(m.ts); }
@@ -1425,7 +1481,12 @@ async function addFiles(files) {
       if (!applied) {
         applied = true;
         D.files.push(item); renderPhotoPrev();
-        if (await askPhotoInfo(name, meta, 'exif')) await applyMeta(meta, '사진의 날짜·위치를 적용하고 날씨까지 맞췄어요');
+        /* 사진 자체의 meta는 그대로 두고, 화면에 보여줄 정보만 따로 만들어요 (추정 위치는 사진 정보로 저장하지 않음) */
+        const show = { ...meta };
+        if (show.lat == null && show.ts) { const g = guessPlace(show.ts); if (g) Object.assign(show, { lat: g.lat, lon: g.lon, place: g.place, guess: g }); }
+        const ans = await askPhotoInfo(name, show, 'exif');
+        if (ans === 'date') await applyMeta({ ts: show.ts }, '사진의 날짜만 적용했어요');
+        else if (ans) await applyMeta(show, show.guess ? '사진 날짜와 추정 위치를 적용했어요' : '사진의 날짜·위치를 적용하고 날씨까지 맞췄어요');
         continue;
       }
     } else if (!fallback && f.lastModified && !D.editId) fallback = { ts: f.lastModified, name };
@@ -2877,7 +2938,7 @@ function renderWeekBar() {
    ========================================================== */
 const bookState = { title: '나의 기록', author: '', from: '', to: '', nbs: null, size: 'a5', photos: true, stamps: false, toc: true, cover: true };
 function renderSettings() {
-  renderOfflineBox(); renderTypoBox(); renderThemeBox(); renderNbManage(); renderTagManage(); renderSafeBox(); renderBookForm(); renderDriveBox(); renderTrash(); renderLockBox(); renderInstallBox();
+  renderOfflineBox(); renderTypoBox(); renderThemeBox(); renderNbManage(); renderTagManage(); renderSafeBox(); renderBookForm(); renderDriveBox(); renderTrash(); renderLockBox(); renderInstallBox(); renderPhotoLocBox();
   const files = S.entries.reduce((a, e) => a + (e.photos ? e.photos.length : 0) + (e.files ? e.files.length : 0), 0);
   $('#statsLine').textContent = `기록 ${S.entries.filter(e => e.type === 'log').length}개 · 첨부 ${files}개 · 루틴 ${S.habits.length}개 · 휴지통 ${S.trash.length}개`;
 }
@@ -4089,6 +4150,7 @@ document.addEventListener('click', async e => {
     case 'offlineFix': return offlineFix();
     case 'offlineCheck': return renderOfflineBox();
     case 'install': { if (!deferredInstall) return; deferredInstall.prompt(); await deferredInstall.userChoice.catch(() => {}); deferredInstall = null; return renderInstallBox(); }
+    case 'pingOn': case 'pingOff': case 'pingClear': return pingAct(act);
     case 'wipe': return wipeAll();
   }
 });
@@ -4136,7 +4198,7 @@ $('#text').addEventListener('beforeinput', onBeforeInput);
 document.addEventListener('beforeinput', e => { if (e.target.id === 'dText') onBeforeInput(e); });
 document.addEventListener('focusin', e => { if (e.target.id === 'dTagIn') { DT.tagFocus = true; updateTagSugs(); } });
 document.addEventListener('focusout', e => { if (e.target.id === 'dText') saveDText(); });
-document.addEventListener('visibilitychange', () => { if (document.hidden) saveDText(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) saveDText(); else pingNow(); });
 $('#text').addEventListener('focus', () => { if (coarse.matches) { $('#fmtbar').classList.add('float'); placeBar(); } });
 $('#text').addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== $('#text')) { $('#fmtbar').classList.remove('float'); } }, 200));
 if (window.visualViewport) { visualViewport.addEventListener('resize', placeBar); visualViewport.addEventListener('scroll', placeBar); }
@@ -4201,7 +4263,7 @@ async function init() {
   applyTheme(lsGet('lifeos-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
   const n = new Date(); $('#dDate').value = ymd(n); $('#dTime').value = hm(n);
   try { await DB.open(); } catch { document.body.innerHTML = '<p style="padding:40px">이 브라우저에서는 IndexedDB를 사용할 수 없어요. (시크릿 모드이거나 저장소 차단 상태일 수 있어요)</p>'; return; }
-  await loadAll(); await purgeTrash();
+  await loadAll(); await purgeTrash(); await loadPings();
   { const old = S.entries.filter(e => e.prevText != null && (!e.prevAt || Date.now() - e.prevAt > PREV_KEEP)); if (old.length) { old.forEach(e => { delete e.prevText; delete e.prevAt; }); DB.putMany('entries', old).catch(() => {}); } }
   const dn = lsGet('lifeos-draft-nb'); if (dn && S.notebooks.includes(dn)) D.notebook = dn;
   const draft = lsGet('lifeos-draft'); if (draft) $('#text').value = draft; else maybeApplyTpl(D.notebook);
