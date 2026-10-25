@@ -1,0 +1,115 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>폴더 연결 점검</title><style>
+:root{--bg:#faf8f5;--fg:#23201c;--mute:#6f685f;--card:#fff;--line:#e4ded5;--ok:#1f7a45;--okbg:#e3f3ea;--bad:#b3261e;--badbg:#fbe6e4;--acc:#2d5b8a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17160f;--fg:#efeae2;--mute:#a8a094;--card:#221f19;--line:#3a352c;--ok:#7fd6a3;--okbg:#1c3427;--bad:#ff9d94;--badbg:#3d1f1c;--acc:#8fb9e6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17160f;--fg:#efeae2;--mute:#a8a094;--card:#221f19;--line:#3a352c;--ok:#7fd6a3;--okbg:#1c3427;--bad:#ff9d94;--badbg:#3d1f1c;--acc:#8fb9e6;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Noto Sans KR",sans-serif;padding-block:20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:560px;margin:0 auto}
+h1{font-size:1.35rem;margin:0 0 4px}
+p.s{color:var(--mute);margin:0 0 18px;font-size:.95rem}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.box b{display:block;margin-bottom:2px}
+.box small{display:block;color:var(--mute);margin-bottom:10px}
+label.b{display:block;text-align:center;background:var(--acc);color:var(--bg);padding:14px;border-radius:8px;font-weight:700;cursor:pointer}
+input[type=file]{display:none}
+.res{margin-top:10px}
+.r{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:.95rem;overflow-wrap:anywhere}
+.r.ok{background:var(--okbg);color:var(--ok)}
+.r.bad{background:var(--badbg);color:var(--bad)}
+.r div{color:var(--fg);font-size:.85rem;margin-top:4px}
+
+button.b{display:block;width:100%;border:0;font:inherit;text-align:center;background:var(--acc);color:var(--bg);padding:14px;border-radius:8px;font-weight:700;cursor:pointer}
+button.b:disabled{opacity:.4}
+.note{font-size:.85rem;color:var(--mute);margin-top:6px}
+</style></head><body><main>
+<h1>폴더 연결 점검</h1>
+<p class="s">지금까지와 <b>다른 통로</b>(안드로이드 문서 선택기)로 사진을 읽어 봐요. 사진은 폰 안에서만 읽고 어디로도 보내지 않아요.</p>
+<div class="box" id="nosup" hidden><b>이 브라우저는 이 기능을 지원하지 않아요</b><small>크롬을 최신으로 업데이트한 뒤 다시 열어 주세요.</small></div>
+
+<div class="box"><b>⑥ 문서 선택기로 사진 고르기</b><small>열린 화면에서 왼쪽 위 ≡ → 내장 메모리(또는 Galaxy 이름) → DCIM → Camera 순서로 들어가 사진을 고르세요. "이미지"·"최근"은 누르지 마세요.</small>
+<button class="b" id="b6">⑥ 사진 고르기</button><div class="res" id="o6"></div></div>
+
+<div class="box"><b>⑦ 카메라 폴더 연결하기</b><small>폴더 선택 화면에서 DCIM → <b>Camera</b> 폴더로 들어간 뒤 아래쪽 "이 폴더 사용"을 누르고 허용하세요. 직접 찍은 최근 사진 5장을 자동으로 읽어요.</small>
+<button class="b" id="b7">⑦ Camera 폴더 연결</button><div class="res" id="o7"></div></div>
+
+<div class="box"><b>⑧ 연결 기억하는지 확인</b><small>⑦을 한 뒤 이 페이지를 완전히 닫았다가 다시 열고 누르세요. 폴더를 다시 고르지 않고 읽히면 "매번 고를 필요 없음"이에요.</small>
+<button class="b" id="b8">⑧ 저장된 폴더 다시 읽기</button><div class="res" id="o8"></div></div>
+</main>
+<script>
+function exif(buf){
+  const v=new DataView(buf),out={jpeg:false,exif:false,date:null,gpsIfd:false,tags:[],lat:null,lon:null};
+  if(v.byteLength<12)return out;
+  const sig=v.getUint16(0);
+  if(sig!==0xFFD8){
+    const t=String.fromCharCode(v.getUint8(4),v.getUint8(5),v.getUint8(6),v.getUint8(7));
+    out.kind=t==='ftyp'?'HEIC/MP4 계열':'알 수 없음';return out;
+  }
+  out.jpeg=true;let off=2;
+  while(off<v.byteLength-4){
+    const m=v.getUint16(off);off+=2;
+    if(m===0xFFDA||(m&0xFF00)!==0xFF00)break;
+    const len=v.getUint16(off);
+    if(m===0xFFE1&&v.getUint32(off+2)===0x45786966){try{read(v,off+8,out)}catch(e){out.err=String(e)}return out}
+    off+=len;
+  }
+  return out;
+}
+function read(v,t,out){
+  out.exif=true;
+  const le=v.getUint16(t)===0x4949,u16=o=>v.getUint16(o,le),u32=o=>v.getUint32(o,le);
+  const SZ={1:1,2:1,3:2,4:4,5:8,7:1,9:4,10:8};
+  const ifd=o=>{const m={},n=u16(o);for(let i=0;i<n;i++){const e=o+2+i*12,ty=u16(e+2),c=u32(e+4),sz=(SZ[ty]||1)*c;m[u16(e)]={type:ty,cnt:c,vo:sz>4?t+u32(e+8):e+8}}return m};
+  const str=x=>{let s='';for(let i=0;i<x.cnt-1;i++)s+=String.fromCharCode(v.getUint8(x.vo+i));return s};
+  const rat=(x,i)=>u32(x.vo+i*8)/u32(x.vo+i*8+4);
+  const i0=ifd(t+u32(t+4));
+  if(i0[0x8769]){const ex=ifd(t+u32(i0[0x8769].vo));const d=ex[0x9003]||ex[0x9004];if(d)out.date=str(d)}
+  if(i0[0x8825]){
+    out.gpsIfd=true;const g=ifd(t+u32(i0[0x8825].vo));out.tags=Object.keys(g).map(Number);
+    if(g[2]&&g[4]){
+      const dms=x=>rat(x,0)+rat(x,1)/60+rat(x,2)/3600;
+      let la=dms(g[2]),lo=dms(g[4]);
+      if(g[1]&&str(g[1])[0]==='S')la=-la;if(g[3]&&str(g[3])[0]==='W')lo=-lo;
+      if(isFinite(la)&&isFinite(lo)&&(la||lo)){out.lat=la;out.lon=lo}
+    }
+  }
+}
+function show(el,f,x){
+  const gps=x.lat!=null;
+  let h='<div class="r '+(gps?'ok':'bad')+'"><b>'+(gps?'✔ 위치 있음':'✘ 위치 없음')+'</b>'
+    +'<div>'+f.name+' · '+Math.round(f.size/1024)+'KB · '+(f.type||'종류 표시 없음')+'</div>';
+  if(gps)h+='<div>위도 '+x.lat.toFixed(5)+', 경도 '+x.lon.toFixed(5)+'</div>';
+  h+='<div>촬영일시: '+(x.date||'없음')+'</div>';
+  if(!x.jpeg)h+='<div>JPEG가 아님 ('+(x.kind||'')+')</div>';
+  else if(!x.exif)h+='<div>사진 정보(EXIF)가 파일에 아예 없음</div>';
+  else if(!x.gpsIfd)h+='<div>사진 정보는 있으나 위치 항목이 지워져 있음</div>';
+  else if(!gps)h+='<div>위치 칸은 있으나 값이 비어 있음 (항목 '+x.tags.join(',')+')</div>';
+  if(x.err)h+='<div>읽기 오류: '+x.err+'</div>';
+  el.insertAdjacentHTML('beforeend',h+'</div>');
+}
+
+function msg(el,ok,t){el.insertAdjacentHTML('beforeend','<div class="r '+(ok?'ok':'bad')+'"><b>'+t+'</b></div>')}
+const idb=()=>new Promise((res,rej)=>{const q=indexedDB.open('fscheck',1);q.onupgradeneeded=()=>q.result.createObjectStore('h');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});
+async function saveH(h){const d=await idb();await new Promise(r=>{const t=d.transaction('h','readwrite');t.objectStore('h').put(h,'cam');t.oncomplete=r;t.onerror=r})}
+async function loadH(){const d=await idb();return new Promise(r=>{const q=d.transaction('h').objectStore('h').get('cam');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}
+async function readFolder(dir,el){
+  const t0=Date.now(),list=[];
+  for await(const [n,h] of dir.entries()){if(h.kind==='file'&&/\.jpe?g$/i.test(n))list.push([n,h])}
+  const cam=list.filter(x=>/^\d{8}_\d{6}/.test(x[0])).sort((a,b)=>b[0].localeCompare(a[0]));
+  msg(el,true,'폴더 "'+dir.name+'" · JPG '+list.length+'장 (직접 찍은 사진 '+cam.length+'장) · 목록 읽기 '+((Date.now()-t0)/1000).toFixed(1)+'초');
+  for(const [n,h] of (cam.length?cam:list).slice(0,5)){const f=await h.getFile();show(el,f,exif(await f.arrayBuffer()))}
+}
+if(!('showOpenFilePicker' in window)){document.getElementById('nosup').hidden=false;['b6','b7','b8'].forEach(i=>document.getElementById(i).disabled=true)}
+document.getElementById('b6').onclick=async()=>{const el=document.getElementById('o6');el.innerHTML='';
+  try{const hs=await showOpenFilePicker({multiple:true});for(const h of hs){const f=await h.getFile();show(el,f,exif(await f.arrayBuffer()))}}
+  catch(e){if(e.name!=='AbortError')msg(el,false,'실패: '+e.name+' '+e.message)}};
+document.getElementById('b7').onclick=async()=>{const el=document.getElementById('o7');el.innerHTML='';
+  try{const d=await showDirectoryPicker({id:'cam',startIn:'pictures'});await saveH(d).catch(()=>{});await readFolder(d,el)}
+  catch(e){if(e.name!=='AbortError')msg(el,false,'실패: '+e.name+' '+e.message)}};
+document.getElementById('b8').onclick=async()=>{const el=document.getElementById('o8');el.innerHTML='';
+  try{const d=await loadH();if(!d){msg(el,false,'저장된 폴더가 없어요. ⑦을 먼저 해 주세요');return}
+    let p=d.queryPermission?await d.queryPermission({mode:'read'}):'granted';
+    msg(el,p==='granted',p==='granted'?'✔ 다시 고르지 않아도 권한이 남아 있어요':'권한 다시 요청 필요 ('+p+')');
+    if(p!=='granted'&&d.requestPermission)p=await d.requestPermission({mode:'read'});
+    if(p==='granted')await readFolder(d,el)}
+  catch(e){msg(el,false,'실패: '+e.name+' '+e.message)}};
+</script></body></html>
