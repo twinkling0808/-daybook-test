@@ -848,8 +848,38 @@ body.locked #lock{display:flex}
 .pdots{display:flex;gap:14px;height:18px}
 .pdots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--muted)}
 .pdots i.f{background:var(--text);border-color:var(--text)}
-.keypad{display:grid;grid-template-columns:repeat(3,76px);gap:14px}
-.keypad button{height:64px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:24px}
+.hsortbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 10px;flex-wrap:wrap}
+.hdrag{flex:none;width:36px;height:40px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px;letter-spacing:-3px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.hro{display:flex;align-items:center;gap:4px;padding:2px 0;background:var(--bg)}.hro .hron{display:flex;flex-direction:column;min-width:0}.hro .hron b{font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hro .hron small{color:var(--muted);font-size:12.5px}
+.nbsort{background:var(--bg)}.nbsort .nbdrag{margin-left:-6px}
+.dsh{transition:transform .16s ease}.dragging{position:relative;z-index:6;background:var(--surface)!important;box-shadow:0 6px 18px rgba(0,0,0,.18);border-radius:10px;transition:none}
+/* 영수증 3종 (하루 영수증·이번 달 발견·연간 영수증) */
+.rcfold{margin:16px 0 0}.rcfold>.link{font-size:14px}
+.rcp{max-width:300px;margin:12px auto 4px;background:color-mix(in srgb,var(--surface) 90%,#d9cdb0);color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;font-size:12.5px;line-height:1.55;padding:16px 16px 24px;border:1px solid var(--line);-webkit-mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/14px 100%;mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/14px 100%}
+.rcp .rct{text-align:center;font-weight:700;letter-spacing:.18em;font-size:14px}
+.rcp .rcs{text-align:center;font-size:11.5px;color:var(--muted);margin-top:2px}
+.rcp .rcl{border-top:1px dashed var(--line);margin:9px 0}
+.rcp .rcmood{display:flex;align-items:center;gap:8px;margin:2px 0 4px}.rcp .rcmood b{font-size:14px}
+.rcp .rcrow{display:flex;gap:8px;align-items:baseline}.rcp .rcrow>span:first-child{flex:none;min-width:2.4em}
+.rcp .rcrow .rcn{flex:1;min-width:0;color:var(--muted);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rcp .rcrow .rcv{flex:none;margin-left:auto;text-align:right}
+.rcp .rctot{border-top:1px dashed var(--line);margin-top:4px;padding-top:3px;font-weight:700}
+.rcp .rcmac{display:flex;height:6px;gap:2px;margin:6px 0 2px}.rcp .rcmac i{display:block;background:var(--text);border-radius:1px}.rcp .rcmac i:nth-child(1){opacity:.28}.rcp .rcmac i:nth-child(2){opacity:.7}.rcp .rcmac i:nth-child(3){opacity:.45}
+.rcp .rcsm{font-size:11px;color:var(--muted);text-align:center;margin-top:3px}
+.rcp .rcbar{display:block;width:100%;height:14px;margin:4px 0 0;color:var(--text);opacity:.9}
+.rcp .rcid{letter-spacing:.12em;margin-top:5px}
+.rcp .rcmbar{display:flex;gap:1px;height:7px;margin:5px 0 2px}.rcp .rcmbar i{display:block}
+.rcp .rcmapt{font-size:11px;color:var(--muted);margin:8px 0 0}
+.rcp .rcmap{display:block;width:100%;height:auto;color:var(--text);margin:2px 0 0}
+.rcyearwrap{background:transparent;border:0;box-shadow:none;padding:0}.rcyearwrap .rcp{max-width:340px}
+.rcfind .rcmbar{display:flex;gap:1px;height:8px;border-radius:4px;overflow:hidden}.rcfind .rcmbar i{display:block}
+.rcmleg{display:flex;flex-wrap:wrap;gap:4px 12px;margin:7px 0 0;font-size:13px;color:var(--muted)}.rcmleg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:baseline}
+.rcfl{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}.rcfl>div{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:3px 0;font-size:15px}.rcfl small{color:var(--muted);font-size:12.5px;flex:none}.rcfl span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.weta{margin:-4px 2px 8px;text-align:center}
+.bookpaper .rcp{--surface:#fffdf6;--text:#2b2a27;--muted:#6b675d;--line:#cfc8b6;max-width:58mm;margin:1mm 0 3mm;font-size:7.5pt;line-height:1.45;padding:3mm 3mm 5mm;-webkit-print-color-adjust:exact;print-color-adjust:exact;break-inside:avoid;-webkit-mask:none;mask:none;border-bottom-style:dashed}
+.bookpaper .rcp .rct{font-size:8.5pt}.bookpaper .rcp .rcbar{height:8px}
+.keypad{display:grid;grid-template-columns:repeat(3,72px);gap:16px;justify-content:center}
+.keypad button{width:72px;height:72px;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center}
 .keypad button:active{background:var(--hover)}
 .lockmsg{min-height:20px;font-size:14px;color:var(--danger)}
 
@@ -1306,7 +1336,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER = '20261114-8';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER = '20261115-3';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -1315,7 +1345,7 @@ const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 const FS = { sm: 15, md: 16.5, lg: 18, xl: 20.5 };
 const LH = { tight: 1.6, md: 1.85, loose: 2.1 };
 const WD = { narrow: 640, md: 720, wide: 920 };
-const P = { fs: 'lg', lh: 'md', fam: 'sans', head: 'serif', w: 'md', hc: false, paper: false, moodrow: true, health: false, hideDiet: false, nbFreq: false };
+const P = { fs: 'lg', lh: 'md', fam: 'sans', head: 'serif', w: 'md', hc: false, paper: false, receipt: false, moodrow: true, health: false, hideDiet: false, nbFreq: false };
 try { Object.assign(P, JSON.parse(lsGet('lifeos-ui') || '{}')); } catch {}
 function applyPrefs() {
   const st = document.documentElement.style;
@@ -1339,6 +1369,7 @@ function renderTypoBox() {
     <div class="opt"><span>제목 글꼴</span>${seg('head', [['serif', '명조'], ['sans', '고딕']])}</div>
     <div class="opt"><span>본문 폭</span>${seg('w', [['narrow', '좁게'], ['md', '기본'], ['wide', '넓게']])}</div>
     <div class="opt"><span>종이 느낌</span><label class="check"><input type="checkbox" data-act="prefPaper" ${P.paper ? 'checked' : ''}> 앱 배경에 은은한 종이 결 (어두운 테마에서는 안 보여요)</label></div>
+    <div class="opt"><span>하루 영수증</span><label class="check"><input type="checkbox" data-act="prefReceipt" ${P.receipt ? 'checked' : ''}> 글 맨 아래·PDF에 그날을 영수증처럼 요약해서 보이기</label></div>
     <div class="opt"><span>기분 얼굴 버튼</span><label class="check"><input type="checkbox" data-act="prefMoodrow" ${P.moodrow !== false ? 'checked' : ''}> 글쓰기 화면에 기분 고르는 얼굴 버튼 보이기</label></div>
     <div class="opt"><span>글자 진하게</span><label class="check"><input type="checkbox" data-act="prefHc" ${P.hc ? 'checked' : ''}> 보조 글씨·선을 더 또렷하게(고대비)</label></div>
     <div class="sample md"><h2>오늘의 한 줄</h2><p>글자 크기와 줄 간격은 이렇게 보여요. 가독성은 눈이 편한 쪽이 정답이에요.</p><ul><li>말머리 목록 예시</li><li>두 번째 항목</li></ul></div>
@@ -2711,6 +2742,7 @@ function renderDetail(force) {
       ${attachHtml(e)}${DT.editing ? '' : prev}
       ${dMoodHtml(e)}
       ${detailTagsHtml(e)}
+      ${rcDayFold(e)}
       <div class="eactions"><button data-act="dPhotos">🖼 사진·파일 추가/편집</button>${e.updatedAt ? '<span class="edited">· 수정됨</span>' : ''}</div>`;
   }
   const right = DT.editing ? '<button class="btn sm primary" data-act="dDone">완료</button>'
@@ -2729,7 +2761,7 @@ function dMoodHtml(e) {
   return `<div class="dmood"><button type="button" class="mbtn ${cur ? '' : 'empty'}" data-act="dMoodToggle" aria-label="기분 고르기" aria-expanded="false">${cur ? moodFaceBg(cur, 40) : '＋'}</button><span class="mhint">${cur ? `${esc(cur)} · 눌러서 바꾸기` : '기분 <small>(안 골라도 돼요)</small>'}</span></div>`;
 }
 function openDetail(id) {
-  DT.foodKind = null; DT.moodOpen = false; DT.menu = false; DT.id = id; DT.editing = false; DT.dirty = false; DT.tagQ = ''; DT.tagFocus = false; $('#detail').hidden = false; document.body.classList.add('detailOpen');
+  DT.foodKind = null; DT.rcOpen = false; DT.moodOpen = false; DT.menu = false; DT.id = id; DT.editing = false; DT.dirty = false; DT.tagQ = ''; DT.tagFocus = false; $('#detail').hidden = false; document.body.classList.add('detailOpen');
   $('#detail').scrollTop = 0; renderDetail(true);
   try { history.pushState({ dt: 1 }, ''); } catch {}
 }
@@ -3100,8 +3132,10 @@ function renderReview() {
       + (nbRows.length ? `\n\n### 주제\n${jn(nbRows, ([k, n]) => `${k} ${n}`)}` : '')
       + (tagRows.length ? `\n\n### 자주 쓴 태그\n${jn(tagRows, ([t, n]) => `#${t} ${n}`)}` : '')
       + (hrows.length ? `\n\n### 습관 달성률\n${hrows.map(({ h, r }) => `- ${h.name} ${Math.round(r.done / r.due * 100)}% (${r.done}/${r.due}일)`).join('\n')}` : '') };
+  const rcTop = isM ? (rv.y === new Date().getFullYear() && rv.m === new Date().getMonth() ? rcDiscoverHtml() : '') : rcYearHtml(rv.y);
   $('#sub-review').innerHTML = `<div class="row" style="justify-content:space-between;margin-bottom:12px"><div class="seg"><button class="${isM ? 'on' : ''}" data-act="rvMode" data-v="month">월</button><button class="${!isM ? 'on' : ''}" data-act="rvMode" data-v="year">연</button></div>
     <div class="weeknav" style="margin:0"><button class="btn sm ghost" data-act="rvPrev">‹</button><span class="wl">${title}</span><button class="btn sm ghost" data-act="rvNext">›</button></div></div>
+    ${rcTop}
     <div class="card"><div class="stat3"><div><b>${logs.length}</b><span>기록</span></div><div><b>${days}</b><span>쓴 날</span></div><div><b>${photos}</b><span>사진</span></div></div>
     <div class="small muted" style="text-align:center;margin-top:10px">쓴 글자 ${chars.toLocaleString()}자 · 현재 연속 ${writeStreak()}일${kavg ? ` · 하루 평균 ${kavg.toLocaleString()}kcal` : ''}</div></div>${mb}${yc}
     <div class="card" style="margin-top:12px"><div class="moodlabel">감정</div>${bars(moodRows, k => (MOODS[k] || {}).c || 'var(--accent)')}</div>
@@ -3148,6 +3182,249 @@ async function selDel() {
   const ids = new Set(es.map(e => e.id)); S.entries = S.entries.filter(x => !ids.has(x.id)); es.forEach(e => S.trash.push({ ...e, deletedAt: Date.now() }));
   const wk = es.filter(e => e.weeklyStat).map(e => e.weeklyStat.week + '_' + e.weeklyStat.nb); if (wk.length) wkSkipAdd(wk);
   SEL.ids.clear(); renderActive(); updateHeaderSub(); toast(`${es.length}개를 휴지통으로 옮겼어요`);
+}
+
+/* ===== 영수증 3종 (2026-11-15) =====
+   ① 하루 영수증 카드 — 글 상세 맨 아래 접는 줄, 글 PDF·책 (설정에서 켜야 보여요, 기본 꺼짐)
+   ② 이번 달 발견 — 돌아보기(월) 맨 위 카드
+   ③ 연간 영수증 — 돌아보기(연) 맨 위, 12월 15일부터
+   모두 그때그때 기록에서 계산해 그려요. 저장하는 값은 없고, 숫자는 앱이 세요(AI 아님). */
+const RC_NEG = ['슬픔', '지침', '짜증'], RC_POS = ['행복', '여유', '뿌듯', '희망'];
+const rcMoodColor = k => (MOODS[k] || {}).c || '';
+const rcImgCount = e => (e.photos || []).length + (e.files || []).filter(isImg).length;
+const rcSkipEntry = e => e.type !== 'log' || e.weeklyStat || /^(hbrief_|review_)/.test(String(e.id || ''));
+/* 장식용 바코드(스캔 안 돼요): 날짜 숫자로 줄 폭을 정해 늘 같은 모양. 높이는 낮게, 색은 그날 기분 색 */
+function rcBarcode(seed, color, h = 14, w = 200) {
+  let s = 0; for (const ch of String(seed)) s = (s * 31 + ch.charCodeAt(0)) >>> 0;
+  let x = 0, out = '', i = 0;
+  while (x < w - 2) { s = (Math.imul(s, 1103515245) + 12345) >>> 0; const bw = 1 + (s >>> 8) % 3, gap = 1 + (s >>> 12) % 3; out += `<rect x="${x}" y="0" width="${bw}" height="${h}"/>`; x += bw + gap; i++; }
+  return `<svg class="rcbar" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" preserveAspectRatio="none" aria-hidden="true" fill="${color || 'currentColor'}">${out}</svg>`;
+}
+/* ---- ① 하루 영수증 ---- */
+function rcDayData(date) {
+  const es = S.entries.filter(e => e.type === 'log' && ymd(e.ts) === date), texts = es.filter(e => !rcSkipEntry(e) && !e.dayMeals);
+  const byTs = es.slice().sort((a, b) => b.ts - a.ts);
+  const mEntry = byTs.find(e => normMood(e.mood)), mood = mEntry ? normMood(mEntry.mood) : null;
+  const wEntry = byTs.find(e => e.weather && wxInfo(e.weather)), pEntry = byTs.find(e => e.place);
+  const rows = []; let kcal = 0; const mt = { c: 0, p: 0, f: 0 };
+  es.forEach(e => {
+    if (e.dayMeals) { MEALS.forEach(k => { const m = e.dayMeals[k]; if (!m) return; const kk = dayMealKcal(m); const names = (m.items || []).map(i => i.n); if (!kk && !names.length) return;
+      rows.push({ k, names, kcal: kk, ord: MEALS.indexOf(k) }); kcal += kk; (m.items || []).forEach(i => { mt.c += i.c * i.q; mt.p += i.p * i.q; mt.f += i.f * i.q; }); }); }
+    else if (e.meal && +e.meal.kcal > 0) { rows.push({ k: e.meal.kind || '식사', names: [], kcal: +e.meal.kcal, ord: 9 }); kcal += +e.meal.kcal; }
+  });
+  rows.sort((a, b) => a.ord - b.ord);
+  let hn = 0, hm_ = 0, hdots = [];
+  try { S.habits.filter(h => !h.mask && h.preset !== 'weight').forEach(h => { const dn = isDoneOn(h, date), due = isDue(h, date); if (!dn && !due) return; hm_++; if (dn) hn++; hdots.push(dn); }); } catch {}
+  const topics = {}; texts.forEach(e => { const n = e.notebook || ''; if (n) topics[n] = (topics[n] || 0) + 1; });
+  const photos = es.reduce((s, e) => s + rcImgCount(e), 0);
+  return { date, mood, wx: wEntry ? { w: wEntry.weather } : null, place: pEntry ? pEntry.place : '', rows, kcal: Math.round(kcal), mt, hn, hm: hm_, hdots, texts: texts.length, topics, photos };
+}
+function rcHasAny(d) { return !!(d.mood || d.rows.length || d.hn > 0 || d.texts || d.photos); }
+function rcDayHtml(date) {
+  const d = rcDayData(date); if (!rcHasAny(d)) return '';
+  const dt = fromYmd(date), wi = d.wx ? wxInfo(d.wx.w) : null, col = d.mood ? rcMoodColor(d.mood) : '';
+  const head = [`${dt.getFullYear()}.${pad(dt.getMonth() + 1)}.${pad(dt.getDate())} ${DOW[dt.getDay()]}`, wi ? `${wi.icon}${d.wx.w.t != null ? ' ' + Math.round(d.wx.w.t) + '°' : ''}` : '', d.place ? `📍${esc(d.place)}` : ''].filter(Boolean).join(' · ');
+  let h = `<div class="rcp"><div class="rct">DAYBOOK</div><div class="rcs">${head}</div><div class="rcl"></div>`;
+  if (d.mood) h += `<div class="rcmood">${moodFaceBg(d.mood, 28)}<b>${esc(d.mood)}</b></div>`;
+  if (d.rows.length) {
+    h += d.rows.map(r => `<div class="rcrow"><span>${esc(r.k)}</span><span class="rcn">${esc(r.names.slice(0, 3).join('·'))}${r.names.length > 3 ? ' 외' : ''}</span><span class="rcv">${r.kcal ? r.kcal.toLocaleString() : ''}</span></div>`).join('');
+    h += `<div class="rcrow rctot"><span>합계</span><span></span><span class="rcv">${d.kcal.toLocaleString()} kcal</span></div>`;
+    const sum = d.mt.c + d.mt.p + d.mt.f;
+    if (sum > 0) { const pc = x => Math.round(x / sum * 100); h += `<div class="rcmac"><i style="flex:${d.mt.c}"></i><i style="flex:${d.mt.p}"></i><i style="flex:${d.mt.f}"></i></div><div class="rcsm">탄 ${pc(d.mt.c)}% · 단 ${pc(d.mt.p)}% · 지 ${pc(d.mt.f)}%</div>`; }
+  }
+  if (d.hn > 0) h += `<div class="rcrow"><span>습관</span><span class="rcn">${d.hdots.slice(0, 10).map(x => x ? '●' : '○').join('')}</span><span class="rcv">${d.hn}/${d.hm}</span></div>`;
+  const tp = Object.entries(d.topics).sort((a, b) => b[1] - a[1]);
+  if (d.texts) h += `<div class="rcrow"><span>글</span><span class="rcn">${d.texts > 1 && tp.length ? esc(tp.map(([k, n]) => k + ' ' + n).join(' · ')) : (tp[0] ? esc(tp[0][0]) : '')}</span><span class="rcv">${d.texts}개</span></div>`;
+  if (d.photos) h += `<div class="rcrow"><span>사진</span><span></span><span class="rcv">${d.photos}장</span></div>`;
+  h += `<div class="rcl"></div>${rcBarcode(date, col)}<div class="rcsm rcid">DAYBOOK-${date.replace(/-/g, '')}</div></div>`;
+  return h;
+}
+function rcDayFold(e) {
+  if (!P.receipt || e.type !== 'log') return '';
+  const html = rcDayHtml(ymd(e.ts)); if (!html) return '';
+  return `<div class="rcfold"><button class="link" data-act="rcToggle" aria-expanded="${!!DT.rcOpen}">🧾 하루 요약 ${DT.rcOpen ? '▴' : '▾'}</button>${DT.rcOpen ? html : ''}</div>`;
+}
+/* ---- ② 이번 달 발견 (최근 30일) ---- */
+const RC_TOP = {
+  '행복': ['웃는 날이 제일 많았어', '꽤 환한 한 달이었네', '행복이 자주 왔네'], '여유': ['느긋한 날이 많았어', '천천히 잘 흘렀네', '숨 돌릴 틈이 있었어'],
+  '뿌듯': ['해낸 날이 많았네', '뿌듯한 날이 쌓였어', '꽤 잘 해냈네'], '희망': ['기대되는 날이 많았어', '앞이 조금 환했네', '희망이 자주 보였어'],
+  '무던': ['무던하게 지나갔네', '잔잔한 날이 많았어', '조용히 흘러갔네'], '슬픔': ['마음이 좀 가라앉았네', '울적한 날이 있었어', '조용히 슬픈 날이 많았네'],
+  '짜증': ['신경 쓸 일이 많았네', '날이 좀 서 있었어', '짜증이 자주 왔네'], '지침': ['많이 지쳐 있었네', '기운이 좀 모자랐어', '몸이 무거운 날이 많았어']
+};
+function rcDayTops(from, to) {
+  const out = {};
+  S.entries.forEach(e => { if (e.type !== 'log') return; const k = ymd(e.ts); if (k < from || k > to) return; const m = normMood(e.mood); if (!m) return; const o = out[k]; if (!o || e.ts > o.t) out[k] = { t: e.ts, m }; });
+  return out;
+}
+function rcDayWeather(k) {
+  const es = S.entries.filter(e => e.type === 'log' && e.weather && ymd(e.ts) === k).sort((a, b) => b.ts - a.ts); const w = es[0] && wxInfo(es[0].weather); return w ? w.icon : null;
+}
+function rcDiscover() {
+  const to = todayStr(), from = addDays(to, -29), tops = rcDayTops(from, to), keys = Object.keys(tops).sort(), n = keys.length;
+  if (n < 10) return null;
+  const cnt = {}; keys.forEach(k => { cnt[tops[k].m] = (cnt[tops[k].m] || 0) + 1; });
+  const order = Object.keys(MOODS).filter(k => cnt[k]).sort((a, b) => cnt[b] - cnt[a]);
+  const finds = [];
+  /* 날씨 × 기분 */
+  const wx = {}; keys.forEach(k => { const ic = rcDayWeather(k); if (!ic) return; const g = (ic === '🌧️' || ic === '🌦️' || ic === '⛈️') ? 'rain' : (ic === '☀️' || ic === '🌤️') ? 'sun' : 'other'; (wx[g] = wx[g] || []).push(k); });
+  const share = (ks, set) => ks.filter(k => set.includes(tops[k].m)).length;
+  if (wx.rain && wx.rain.length >= 3) { const a = share(wx.rain, RC_NEG), oth = keys.filter(k => !wx.rain.includes(k)), b = oth.length ? share(oth, RC_NEG) / oth.length : 0; if (a / wx.rain.length >= 0.5 && a / wx.rain.length >= b + 0.2) finds.push({ t: '비 오는 날엔 가라앉았네', c: `${a}/${wx.rain.length}`, w: a / wx.rain.length }); }
+  if (wx.sun && wx.sun.length >= 3) { const h = wx.sun.filter(k => tops[k].m === '행복').length, p = share(wx.sun, RC_POS);
+    if (h / wx.sun.length >= 0.6) finds.push({ t: '맑은 날엔 대체로 행복했어', c: `${h}/${wx.sun.length}`, w: h / wx.sun.length }); else if (p / wx.sun.length >= 0.75) finds.push({ t: '맑은 날엔 마음이 가벼웠네', c: `${p}/${wx.sun.length}`, w: p / wx.sun.length }); }
+  /* 습관 × 기분 */
+  try { const hs = S.habits.filter(h => !h.mask && h.preset !== 'weight' && !h.archived); if (hs.length) {
+    const doneDays = keys.filter(k => { const due = hs.filter(h => isDue(h, k)); return due.length && due.every(h => isDoneOn(h, k)); });
+    if (doneDays.length >= 4) { const p = share(doneDays, RC_POS), oth = keys.filter(k => !doneDays.includes(k)), b = oth.length ? share(oth, RC_POS) / oth.length : 0;
+      if (p / doneDays.length >= 0.7 && p / doneDays.length >= b + 0.2) finds.push({ t: '습관 해낸 날엔 뿌듯했어', c: `${p}/${doneDays.length}`, w: p / doneDays.length - 0.01 }); } } } catch {}
+  /* 요일 × 기분 */
+  const wd = {}; keys.forEach(k => { const w = fromYmd(k).getDay(); (wd[w] = wd[w] || []).push(tops[k].m); });
+  Object.entries(wd).forEach(([w, ms]) => { if (ms.length < 3) return; const c = {}; ms.forEach(m => { c[m] = (c[m] || 0) + 1; }); const [m, v] = Object.entries(c).sort((a, b) => b[1] - a[1])[0];
+    if (v / ms.length >= 0.75) finds.push({ t: `${DOW[w]}요일엔 ${m === '행복' ? '웃었네' : m === '여유' ? '느긋했네' : m === '뿌듯' ? '뿌듯했네' : m === '희망' ? '기대했네' : m === '무던' ? '잔잔했네' : m === '슬픔' ? '가라앉았네' : m === '짜증' ? '날이 섰네' : '지쳤네'}`, c: `${v}/${ms.length}`, w: v / ms.length - 0.02 }); });
+  finds.sort((a, b) => b.w - a.w);
+  let lines = finds.slice(0, 3);
+  if (!lines.length) { const tpl = RC_TOP[order[0]], seed = new Date().getMonth() + new Date().getFullYear(); lines = [{ t: tpl[seed % tpl.length], c: `${cnt[order[0]]}/${n}` }]; }
+  return { n, cnt, order, lines };
+}
+function rcDiscoverHtml() {
+  const r = rcDiscover(); if (!r) return '';
+  const bar = r.order.map(k => `<i style="flex:${r.cnt[k]};background:${MOODS[k].c}"></i>`).join('');
+  const top = r.order.slice(0, 3).map(k => `<span><i style="background:${MOODS[k].c}"></i>${k} ${r.cnt[k]}</span>`).join('');
+  return `<div class="card rcfind" style="margin-bottom:12px"><div class="moodlabel">이번 달 발견</div><div class="small muted" style="margin:-2px 0 8px">최근 30일 · 기분을 남긴 ${r.n}일</div>
+    <div class="rcmbar">${bar}</div><div class="rcmleg">${top}</div>
+    <div class="rcfl">${r.lines.map(l => `<div><span>${esc(l.t)}</span><small>${l.c}</small></div>`).join('')}</div></div>`;
+}
+/* ---- ③ 연간 영수증 (점 지도 포함) ---- */
+const RC_KR = { la: [33, 38.7], lo: [124.5, 131.9] };
+const rcIsKr = p => p.lat >= RC_KR.la[0] && p.lat <= RC_KR.la[1] && p.lon >= RC_KR.lo[0] && p.lon <= RC_KR.lo[1];
+function rcClusters(year) {
+  const cl = {}, all = S.entries.filter(e => e.type === 'log' && e.lat != null && e.lon != null && isFinite(e.lat) && isFinite(e.lon));
+  all.forEach(e => { const gy = Math.round(e.lat * 100), gx = Math.round(e.lon * 100), key = gy + ',' + gx, c = cl[key] || (cl[key] = { lat: 0, lon: 0, n: 0, ny: 0, first: e.ts, firstYear: 9999 });
+    c.lat += e.lat; c.lon += e.lon; c.n++; if (e.ts < c.first) c.first = e.ts; const y = new Date(e.ts).getFullYear(); if (y === year) c.ny++; });
+  const list = Object.values(cl).filter(c => c.ny > 0).map(c => ({ lat: c.lat / c.n, lon: c.lon / c.n, n: c.ny, isNew: new Date(c.first).getFullYear() === year, first: c.first }));
+  const used = all.filter(e => new Date(e.ts).getFullYear() === year).length;
+  return { list, used };
+}
+function rcMapSvg(pts, title) {
+  if (pts.length < 2) return '';
+  const W = 280, H = 130, pad_ = 16, cy = Math.cos(pts.reduce((s, p) => s + p.lat, 0) / pts.length * Math.PI / 180);
+  let a = Math.min(...pts.map(p => p.lon)), b = Math.max(...pts.map(p => p.lon)), c = Math.min(...pts.map(p => p.lat)), d = Math.max(...pts.map(p => p.lat));
+  let w = Math.max((b - a) * cy, 0.02), h = Math.max(d - c, 0.02); const sc = Math.min((W - pad_ * 2) / w, (H - pad_ * 2) / h);
+  const ox = (W - w * sc) / 2, oy = (H - h * sc) / 2, X = p => ox + (p.lon - a) * cy * sc, Y = p => oy + (d - p.lat) * sc;
+  const mx = Math.max(...pts.map(p => p.n)), R = p => 2.2 + 6.5 * Math.sqrt(p.n / mx);
+  const news = pts.filter(p => p.isNew).sort((x, y) => x.first - y.first).slice(-12);
+  const line = news.length > 1 ? `<polyline points="${news.map(p => X(p).toFixed(1) + ',' + Y(p).toFixed(1)).join(' ')}" fill="none" stroke="#e9b949" stroke-width="1" stroke-dasharray="3 3" opacity=".8"/>` : '';
+  const dots = pts.slice().sort((x, y) => y.n - x.n).map(p => `<circle cx="${X(p).toFixed(1)}" cy="${Y(p).toFixed(1)}" r="${R(p).toFixed(1)}" fill="${p.isNew ? '#e9b949' : 'currentColor'}" opacity="${p.isNew ? 1 : .62}"/>`).join('');
+  return `<div class="rcmapt">${title}</div><svg class="rcmap" viewBox="0 0 ${W} ${H}" role="img" aria-label="${title}">${line}${dots}</svg>`;
+}
+function rcYearOk(y) { const now = new Date(); return y < now.getFullYear() || (y === now.getFullYear() && todayStr() >= `${y}-12-15`); }
+function rcYearHtml(y) {
+  if (!rcYearOk(y)) return '';
+  const from = `${y}-01-01`, to = `${y}-12-31`, es = S.entries.filter(e => e.type === 'log' && ymd(e.ts) >= from && ymd(e.ts) <= to && !rcSkipEntry(e) && !e.dayMeals);
+  const days = new Set(S.entries.filter(e => e.type === 'log' && ymd(e.ts) >= from && ymd(e.ts) <= to).map(e => ymd(e.ts))).size;
+  if (!es.length) return '';
+  const photos = es.reduce((s, e) => s + rcImgCount(e), 0), tops = rcDayTops(from, to), tk = Object.keys(tops);
+  const cnt = {}; tk.forEach(k => { cnt[tops[k].m] = (cnt[tops[k].m] || 0) + 1; });
+  const order = Object.keys(MOODS).filter(k => cnt[k]).sort((a, b) => cnt[b] - cnt[a]);
+  /* 가장 행복했던 날: 행복이면서 사진·글이 가장 많은 날 */
+  let best = null; tk.filter(k => tops[k].m === '행복').forEach(k => { const ds = S.entries.filter(e => e.type === 'log' && ymd(e.ts) === k), sc = ds.reduce((s, e) => s + rcImgCount(e) + (rcSkipEntry(e) ? 0 : 1), 0); if (!best || sc > best.sc) best = { k, sc }; });
+  /* 가장 오래 이어간 습관(매일/요일 습관의 연속 달성) */
+  let hb = null; try { S.habits.filter(h => !h.mask && h.preset !== 'weight').forEach(h => { let run = 0, mx = 0; eachDay(from > h.startDate ? from : h.startDate, to < todayStr() ? to : todayStr(), k => { if (isCount(hv(h, k))) return; if (!isDue(h, k)) return; if (isDoneOn(h, k)) { run++; if (run > mx) mx = run; } else run = 0; }); if (mx >= 3 && (!hb || mx > hb.n)) hb = { name: h.name, n: mx }; }); } catch {}
+  const top = order[0], col = top ? rcMoodColor(top) : '';
+  let h = `<div class="card rcyearwrap" style="margin-bottom:12px"><div class="rcp rcy"><div class="rct">${y} 연간 영수증</div><div class="rcs">DAYBOOK · ${y}.01.01 – ${y}.12.31</div><div class="rcl"></div>
+    <div class="rcrow"><span>쓴 글</span><span></span><span class="rcv">${es.length.toLocaleString()}개</span></div>
+    <div class="rcrow"><span>기록한 날</span><span></span><span class="rcv">${days}일</span></div>
+    <div class="rcrow"><span>사진</span><span></span><span class="rcv">${photos.toLocaleString()}장</span></div>`;
+  if (best) { const d = fromYmd(best.k); h += `<div class="rcrow"><span>가장 행복했던 날</span><span></span><span class="rcv">${d.getMonth() + 1}월 ${d.getDate()}일 ${DOW[d.getDay()]}</span></div>`; }
+  if (top) h += `<div class="rcrow"><span>올해의 감정</span><span class="rcn"></span><span class="rcv">${esc(top)} ${cnt[top]}일</span></div><div class="rcmbar low">${order.map(k => `<i style="flex:${cnt[k]};background:${MOODS[k].c}"></i>`).join('')}</div>`;
+  if (hb) h += `<div class="rcrow"><span>가장 오래 이어간 습관</span><span></span><span class="rcv">${esc(hb.name)} ${hb.n}일</span></div>`;
+  /* 점 지도: 좌표가 있는 글만 · 해외가 있으면 국내/해외 칸을 나눠요 */
+  const { list, used } = rcClusters(y);
+  if (list.length >= 2 && used >= 5) {
+    const kr = list.filter(rcIsKr), ov = list.filter(p => !rcIsKr(p));
+    h += `<div class="rcl"></div>`;
+    if (ov.length) h += rcMapSvg(kr, '국내') + rcMapSvg(ov, '해외'); else h += rcMapSvg(list, '자주 간 곳');
+    h += `<div class="rcsm">큰 점은 자주 간 곳 · 노란 점은 올해 처음 간 곳<br>좌표가 있는 글 ${used}개 기준</div>`;
+  }
+  h += `<div class="rcl"></div>${rcBarcode('Y' + y, col, 12)}<div class="rcsm rcid">DAYBOOK-${y}</div></div></div>`;
+  return h;
+}
+/* ---- 건강 탭: 목표 체중 예상일 ---- */
+function hlGoalEta(ser, wh) {
+  try {
+    if (!ser.length || !wh || !(wh.goalValue > 0)) return '';
+    const T = todayStr(), from = addDays(T, -13), win = ser.filter(p => p.d >= from && p.d <= T);
+    if (win.length < 3 || fromYmd(win[win.length - 1].d) - fromYmd(win[0].d) < 6 * 86400e3) return '';
+    const pace = hlPace(ser), left = ser[ser.length - 1].v - wh.goalValue;
+    if (pace == null || Math.abs(left) < 0.05) return '';
+    if ((left > 0 && pace >= 0) || (left < 0 && pace <= 0)) return '';
+    if (Math.abs(pace) > 1) return `<div class="small muted weta">지금 속도가 너무 빨라요. 천천히 가도 괜찮아요</div>`;
+    const weeks = Math.abs(left) / Math.abs(pace); if (weeks > 104) return '';
+    const d = fromYmd(addDays(T, Math.round(weeks * 7))), wk = Math.round(weeks);
+    return `<div class="small muted weta">이 속도면 ${d.getMonth() + 1}월 ${d.getDate()}일쯤 · ${wk < 1 ? '1주 안에' : '약 ' + wk + '주 뒤'}</div>`;
+  } catch { return ''; }
+}
+
+/* ===== 끌어서 순서 바꾸기 (2026-11-15) — 습관 목록·설정의 주제 순서가 같이 써요 =====
+   줄 맨 앞 손잡이(⋮⋮)를 잡았을 때만 끌려가서 스크롤과 안 헷갈려요. 놓으면 onDrop(원래 자리, 새 자리) */
+function dragSort(rows, handleSel, onDrop) {
+  rows.forEach(row => {
+    const hd = row.querySelector(handleSel); if (!hd) return;
+    hd.addEventListener('pointerdown', ev => {
+      if (ev.button != null && ev.button > 0) return;
+      ev.preventDefault();
+      const idx = rows.indexOf(row), rects = rows.map(r => r.getBoundingClientRect()), hH = rects[idx].height, y0 = ev.clientY, sc0 = window.scrollY;
+      let cy = ev.clientY, target = idx, raf = 0, ended = false;
+      try { hd.setPointerCapture(ev.pointerId); } catch {}
+      rows.forEach(r => { if (r !== row) r.classList.add('dsh'); });
+      row.classList.add('dragging');
+      const apply = () => {
+        const dy = (cy - y0) + (window.scrollY - sc0); row.style.transform = `translateY(${dy}px)`;
+        const c = rects[idx].top + hH / 2 + dy; target = idx;
+        rows.forEach((r, j) => { if (j === idx) return; const m = rects[j].top + rects[j].height / 2; if (j > idx && c > m) target = Math.max(target, j); if (j < idx && c < m) target = Math.min(target, j); });
+        rows.forEach((r, j) => { if (j === idx) return; const sh = (target > idx && j > idx && j <= target) ? -hH : (target < idx && j < idx && j >= target) ? hH : 0; r.style.transform = sh ? `translateY(${sh}px)` : ''; });
+      };
+      const tick = () => { if (ended) return; const vh = window.innerHeight; if (cy < 80) window.scrollBy(0, -12); else if (cy > vh - 110) window.scrollBy(0, 12); apply(); raf = requestAnimationFrame(tick); };
+      raf = requestAnimationFrame(tick);
+      const mv = e => { cy = e.clientY; apply(); };
+      const end = (e, cancel) => {
+        if (ended) return; ended = true; cancelAnimationFrame(raf);
+        hd.removeEventListener('pointermove', mv); hd.removeEventListener('pointerup', up); hd.removeEventListener('pointercancel', cn);
+        rows.forEach(r => { r.classList.remove('dragging', 'dsh'); r.style.transform = ''; });
+        if (!cancel && target !== idx) onDrop(idx, target);
+      };
+      const up = e => end(e, false), cn = e => end(e, true);
+      hd.addEventListener('pointermove', mv); hd.addEventListener('pointerup', up); hd.addEventListener('pointercancel', cn);
+    });
+  });
+}
+/* 습관 정렬: 내 순서(h.order, 없으면 지금 순서 그대로) 또는 "오늘 할 것 먼저"(P.hsort==='todo') */
+function sortedHabits(list) {
+  const idx = new Map(S.habits.map((h, i) => [h.id, i])), ord = h => h.order != null ? h.order : 1e6 + idx.get(h.id);
+  let a = list.slice().sort((x, y) => ord(x) - ord(y));
+  if (P.hsort === 'todo') {
+    const T = todayStr();
+    const rank = h => { try { if (!isDue(h, T)) return 2; if (isCount(h)) { const r = hv(h, T), [pa, pb] = periodOf(r, T); return periodCount(h, pa, pb) >= (hv(h, pa).freq || r.freq).n ? 1 : 0; } return isDoneOn(h, T) ? 1 : 0; } catch { return 0; } };
+    a = a.map((h, i) => [h, i]).sort((p, q) => rank(p[0]) - rank(q[0]) || p[1] - q[1]).map(p => p[0]);
+  }
+  return a;
+}
+function hSortBarHtml(n) {
+  if (n < 4) return '';
+  const mine = P.hsort !== 'todo';
+  return `<div class="hsortbar"><div class="seg"><button class="${mine ? 'on' : ''}" data-act="hSort" data-v="mine">내 순서</button><button class="${!mine ? 'on' : ''}" data-act="hSort" data-v="todo">오늘 할 것 먼저</button></div>${mine ? `<button class="link" data-act="hReorder">${H.reorder ? '완료' : '순서 바꾸기'}</button>` : ''}</div>`;
+}
+function hReorderRowsHtml(hs) {
+  return `<div class="hlist hro-list">${hs.map(h => `<div class="hitem hro" data-hid="${esc(h.id)}"><span class="hdrag" aria-label="끌어서 순서 바꾸기">⋮⋮</span><span class="hron"><b>${esc(h.name)}</b><small>${esc(daysLabel(h))}</small></span></div>`).join('')}</div><div class="small muted" style="margin:8px 2px 0">⋮⋮ 를 잡고 위아래로 끌어 보세요</div>`;
+}
+async function hDropOrder(hs, from, to) {
+  const arr = hs.slice(); const [m] = arr.splice(from, 1); arr.splice(to, 0, m);
+  const changed = []; arr.forEach((h, i) => { if (h.order !== i) { h.order = i; changed.push(h); } });
+  try { if (changed.length) await DB.putMany('habits', changed); } catch { toast('저장 실패: 저장 공간이 부족할 수 있어요'); }
+  renderHabit();
+}
+async function nbDropOrder(from, to) {
+  const [m] = S.notebooks.splice(from, 1); S.notebooks.splice(to, 0, m);
+  await saveNotebooks(); renderNbManage(); renderActive(); renderComposer();
 }
 
 /* ==========================================================
@@ -3393,9 +3670,10 @@ function renderHabit() {
   const s = startOfWeek(new Date()); s.setDate(s.getDate() + H.off * 7); const e = new Date(s); e.setDate(e.getDate() + 6);
   const lab = `${s.getMonth() + 1}/${s.getDate()} – ${e.getMonth() + 1}/${e.getDate()}`;
   $('#hNav').innerHTML = `<button class="btn sm ghost" data-act="hPrev">‹</button><span class="wl">${lab}</span><button class="btn sm ghost" data-act="hNext">›</button>${H.off ? '<button class="link" data-act="hNow">오늘</button>' : ''}`;
-  const hs = S.habits.filter(h => h.preset !== 'weight' && !h.archived), ar = S.habits.filter(h => h.preset !== 'weight' && h.archived);
+  const hs = sortedHabits(S.habits.filter(h => h.preset !== 'weight' && !h.archived)), ar = S.habits.filter(h => h.preset !== 'weight' && h.archived);
   const head = hs.some(h => !isCount(h)) ? `<div class="hrow hhead"><span></span><div class="hwk">${WK.map(d => `<span>${d}</span>`).join('')}</div><span></span></div>` : '';
-  $('#habitList').innerHTML = (hs.length ? `<div class="hlist">${head}${hs.map(habitCardHtml).join('')}</div>` : `<div class="empty">${ar.length ? '지금 하는 습관이 없어요<br>아래 ‘보관한 습관’에서 다시 꺼낼 수 있어요' : '아직 습관이 없어요<br>‘+ 새 습관’으로 운동·스쿼트 100일 도전 같은 습관을 만들어 보세요'}</div>`) + `<div class="hlist">${weightRowHtml()}</div>` + archivedHabitsHtml(ar);
+  $('#habitList').innerHTML = (hs.length ? hSortBarHtml(hs.length) + ((H.reorder && P.hsort !== 'todo' && hs.length >= 4) ? hReorderRowsHtml(hs) : `<div class="hlist">${head}${hs.map(habitCardHtml).join('')}</div>`) : `<div class="empty">${ar.length ? '지금 하는 습관이 없어요<br>아래 ‘보관한 습관’에서 다시 꺼낼 수 있어요' : '아직 습관이 없어요<br>‘+ 새 습관’으로 운동·스쿼트 100일 도전 같은 습관을 만들어 보세요'}</div>`) + `<div class="hlist">${weightRowHtml()}</div>` + archivedHabitsHtml(ar);
+  if (H.reorder && P.hsort !== 'todo' && hs.length >= 4) dragSort([...document.querySelectorAll('#habitList .hro')], '.hdrag', (a, b) => hDropOrder(hs, a, b));
   renderWeekBar();
 }
 
@@ -3656,13 +3934,14 @@ function renderSettings() {
 function renderNbManage() {
   const tplOpts = cur => `<option value="__def" ${cur === undefined ? 'selected' : ''}>기본 (틀 없음)</option><option value="none" ${cur === 'none' ? 'selected' : ''}>틀 없음</option>` + allTpls().map(t => `<option value="${t.id}" ${cur === t.id ? 'selected' : ''}>${esc(t.name)}</option>`).join('');
   const last = S.notebooks.length - 1;
-  $('#nbManage').innerHTML = `<label class="check" style="display:block;margin:0 0 10px"><input type="checkbox" data-act="prefNbFreq" ${P.nbFreq ? 'checked' : ''}> <b>자주 쓰는 순으로 보이기</b><br><span class="small muted">끄면 아래 ▲▼ 순서대로 보여요.</span></label>`
-    + S.notebooks.map((n, i) => `<div class="nbrow"><span class="nbmv"><button type="button" class="link" data-act="nbUp" data-v="${esc(n)}" aria-label="위로" ${i === 0 ? 'disabled' : ''}>▲</button><button type="button" class="link" data-act="nbDown" data-v="${esc(n)}" aria-label="아래로" ${i === last ? 'disabled' : ''}>▼</button></span><button type="button" class="nbsw" data-act="nbStyle" data-v="${esc(n)}" style="--nc:${nbColor(n)}" title="색·아이콘 바꾸기">${nbIcon(n)}</button><span style="flex:1;min-width:80px">${esc(n)} <span class="muted small">${S.entries.filter(e => e.notebook === n).length}</span></span>
+  $('#nbManage').innerHTML = `<label class="check" style="display:block;margin:0 0 10px"><input type="checkbox" data-act="prefNbFreq" ${P.nbFreq ? 'checked' : ''}> <b>자주 쓰는 순으로 보이기</b><br><span class="small muted">끄면 ⋮⋮로 정한 순서대로 보여요.</span></label>`
+    + S.notebooks.map((n, i) => `<div class="nbrow nbsort"><span class="hdrag nbdrag" aria-label="끌어서 순서 바꾸기">⋮⋮</span><button type="button" class="nbsw" data-act="nbStyle" data-v="${esc(n)}" style="--nc:${nbColor(n)}" title="색·아이콘 바꾸기">${nbIcon(n)}</button><span style="flex:1;min-width:80px">${esc(n)} <span class="muted small">${S.entries.filter(e => e.notebook === n).length}</span></span>
     <select class="nbtpl" data-v="${esc(n)}" title="새 글을 열면 자동으로 깔리는 틀">${tplOpts(S.nbTpl[n])}</select>
     <button class="link" data-act="nbRename" data-v="${esc(n)}">이름</button><button class="link" data-act="nbDel" data-v="${esc(n)}">삭제</button></div>`).join('')
     + `<div style="margin-top:12px"><button class="btn" data-act="nbAdd">+ 새 주제 추가</button></div>`
     + (S.tpls.length ? `<h2 class="sec" style="margin-top:22px">내가 만든 틀</h2>` + S.tpls.map(t => `<div class="nbrow"><span style="flex:1">${esc(t.name)}</span><button class="link" data-act="tplDel" data-v="${t.id}">삭제</button></div>`).join('') : '')
     + `<p class="small muted" style="margin:14px 0 0">‘틀’은 글쓰기 화면의 틀 버튼에서 저장해요.</p>`;
+  dragSort([...document.querySelectorAll('#nbManage .nbsort')], '.nbdrag', nbDropOrder);
 }
 async function setNbTpl(n, v) { if (v === '__def') delete S.nbTpl[n]; else S.nbTpl[n] = v; await saveMeta('nbtpl', S.nbTpl); toast('저장했어요'); }
 async function delTpl(id) {
@@ -4437,7 +4716,7 @@ async function openBookView(list, o) {
     const months = {}; list.forEach(e => { const d = new Date(e.ts), k = `${d.getFullYear()}년 ${d.getMonth() + 1}월`; months[k] = (months[k] || 0) + 1; });
     html += `<section class="b-toc"><h2>목차</h2>${Object.entries(months).map(([k, n]) => `<div><span>${k}</span><span>${n}편</span></div>`).join('')}</section>`;
   }
-  let cur = '', first = true;
+  let cur = '', first = true; const rcSeen = new Set();
   list.forEach(e => {
     const d = new Date(e.ts), mk = `${d.getFullYear()}-${d.getMonth()}`;
     if (o.month && mk !== cur) { cur = mk; html += `<h2 class="b-month ${first && !o.toc && !o.cover ? 'first' : ''}">${d.getFullYear()}년 ${d.getMonth() + 1}월</h2>`; first = false; }
@@ -4446,6 +4725,7 @@ async function openBookView(list, o) {
     const fl = e.files || [], allImgs = o.photos ? entryImages(e) : [], ph2 = allImgs.filter((_, i) => !inlineRefs(e).has(i)), other = fl.filter(f => !isImg(f));
     const hasPh = !!allImgs.length;
     html += `<article class="b-entry ${hasPh ? 'hasph' : ''}"><div class="b-head"><span class="b-date">${d.getFullYear() !== new Date().getFullYear() || o.day ? d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' : ''}${d.getDate()}일 ${DOW[d.getDay()]}요일 ${hm(d)}</span><span>${meta}</span></div>
+      ${(() => { if (!P.receipt || e.type !== 'log' || rcSeen.has(ymd(e.ts))) return ''; rcSeen.add(ymd(e.ts)); return rcDayHtml(ymd(e.ts)); })()}
       ${e.type === 'habit' ? `<div class="b-stamp">${e.milestone ? '★ ' + esc(e.text) : '✓ ' + esc(habitName(e)) + (e.backfill ? ' (사후 체크)' : '')}</div>` : ''}
       ${e.type === 'log' && e.text ? renderMd(e.text, '', e, !!o.photos) : ''}
       ${(e.tags || []).length ? `<div class="b-stamp" style="color:#777;font-size:9pt">${e.tags.map(t => '#' + esc(t)).join(' ')}</div>` : ''}
@@ -4915,6 +5195,7 @@ document.addEventListener('click', async e => {
     case 'dShare': return shareEntry(DT.id);
     case 'infoTip': return toast(v, 6000);
     case 'dMenu': DT.menu = !DT.menu; return renderDetail();
+    case 'rcToggle': DT.rcOpen = !DT.rcOpen; return renderDetail(true);
     case 'dDup': DT.menu = false; return duplicateEntry(id);
     case 'dMood': DT.moodOpen = false; return patchDetail(x => { x.mood = normMood(x.mood) === v ? null : v; });
     case 'archFilt': archFilt = !archFilt; return renderArchList(true);
@@ -4965,6 +5246,8 @@ document.addEventListener('click', async e => {
     case 'hmPrev': H.moff--; return renderHabit();
     case 'hmNext': H.moff++; return renderHabit();
     case 'hmNow': H.moff = 0; return renderHabit();
+    case 'hSort': P.hsort = v === 'todo' ? 'todo' : 'mine'; H.reorder = false; applyPrefs(); return renderHabit();
+    case 'hReorder': H.reorder = !H.reorder; H.open = null; return renderHabit();
     case 'hPrev': H.off--; return renderHabit();
     case 'hNext': H.off++; return renderHabit();
     case 'hNow': H.off = 0; return renderHabit();
@@ -5060,6 +5343,7 @@ document.addEventListener('change', async e => {
   if (t.dataset && t.dataset.ds) return driveSet(t.dataset.ds, t.type === 'checkbox' ? t.checked : t.value);
   if (t.id === 'bkPaperSel') return setBookPaper(t.value);
   if (t.id === 'lockAfter') { lsSet(LOCKAFTER_KEY, t.value); return toast('저장했어요'); }
+  if (t.dataset && t.dataset.act === 'prefReceipt') { P.receipt = t.checked; applyPrefs(); return; }
   if (t.dataset && t.dataset.act === 'prefPaper') { P.paper = t.checked; applyPrefs(); return; }
   if (t.dataset && t.dataset.act === 'prefNbFreq') { P.nbFreq = t.checked; applyPrefs(); renderNbManage(); renderActive(); renderComposer(); return; }
   if (t.dataset && t.dataset.act === 'prefMoodrow') { P.moodrow = t.checked; applyPrefs(); moodOpen = false; renderMoodRow(); return; }
@@ -5302,7 +5586,7 @@ async function zipEntryBlob(e) {
 /* ---- 백업 데이터 만들기 ---- */
 const stripFiles = e => e.files && e.files.length ? { ...e, files: e.files.map(({ blob, data, ...r }) => r) } : e;
 function backupData() {
-  return { app: 'LifeOS', version: 4, exportedAt: new Date().toISOString(), notebooks: S.notebooks, nbColors: S.nbColors, nbIcons: S.nbIcons, tpls: S.tpls, nbTpl: S.nbTpl, health: S.health,
+  return { app: 'LifeOS', version: 4, exportedAt: new Date().toISOString(), notebooks: S.notebooks, nbColors: S.nbColors, nbIcons: S.nbIcons, tpls: S.tpls, nbTpl: S.nbTpl, health: S.health, foods: (typeof customFoods === 'function' ? customFoods() : []),
     entries: S.entries.map(stripFiles), trash: S.trash.map(stripFiles), habits: S.habits, logs: Object.values(S.logs) };
 }
 const mediaFilesOf = list => { const m = []; list.forEach(e => (e.files || []).forEach(f => { if (f.blob) m.push(f); })); return m; };
@@ -5450,6 +5734,7 @@ async function restoreData(data, getMedia, has) {
   S.nbColors = mode === 'replace' ? { ...(data.nbColors || {}) } : { ...S.nbColors, ...(data.nbColors || {}) };
   S.nbIcons = mode === 'replace' ? { ...(data.nbIcons || {}) } : { ...S.nbIcons, ...(data.nbIcons || {}) };
   { const hd = data.health || {}; hd.briefs = hd.briefs || {}; S.health = mode === 'replace' ? { ...hlDefault(), ...hd } : { ...S.health, ...(hd.kcalGoal != null && S.health.kcalGoal == null ? { kcalGoal: hd.kcalGoal } : {}), ...(hd.heightCm != null && S.health.heightCm == null ? { heightCm: hd.heightCm } : {}), briefs: { ...hd.briefs, ...S.health.briefs }, habits: [...new Set([...(S.health.habits || []), ...(hd.habits || [])])], actNbs: S.health.actNbs || hd.actNbs || null }; }
+  try { const fl = Array.isArray(data.foods) ? data.foods : []; if (fl.length) { const cur = customFoods(); fl.forEach(f => { if (f && f.n && !cur.some(x => x.n === f.n && x.u === f.u)) cur.push(f); }); lsSet(CUSTOM_FOOD_KEY, JSON.stringify(cur.slice(0, 300))); } } catch {}   // 내 음식 목록은 덮어쓰지 않고 새 것만 합쳐요
   const tp = mode === 'replace' ? [] : S.tpls; (data.tpls || []).forEach(t => { if (!tp.some(x => x.id === t.id)) tp.push(t); }); S.tpls = tp;
   S.nbTpl = mode === 'replace' ? { ...(data.nbTpl || {}) } : { ...(data.nbTpl || {}), ...S.nbTpl };
   await saveNbColors(); await saveNbIcons(); await saveHealth(); await saveNotebooks(); await saveMeta('tpls', S.tpls); await saveMeta('nbtpl', S.nbTpl);
@@ -6053,7 +6338,7 @@ function renderHealth() {
     const m = W.show, M = '•••', last = ser[ser.length - 1], r7 = ser.filter(p => p.d > ymd(new Date(Date.now() - 7 * 86400e3))), avg = r7.length ? r7.reduce((s, p) => s + p.v, 0) / r7.length : null;
     const f1 = x => x == null ? '–' : (m ? kg1(x) : M), left = last && wh.goalValue ? last.v - wh.goalValue : null;
     wcard = `<div class="hlsect"><div class="hlhead"><div><span class="small muted">${m ? '' : '숨김 · '}${ser.length}일 기록</span></div><button class="btn sm" data-act="wToggle">${m ? '숨기기' : '보기'}</button></div>
-      ${m ? `<div class="wsum w3"><div><b>${f1(avg)}</b><span>7일 평균</span></div><div><b>${hlPaceTxt(hlPace(ser), false)}</b><span>주당 변화</span></div><div><b>${left == null ? '–' : (left > 0 ? '−' : '+') + kg1(Math.abs(left))}</b><span>목표까지</span></div></div><div class="row" style="justify-content:space-between"><div class="seg">${[[30, '30일'], [90, '90일'], [0, '전체']].map(([v, l]) => `<button class="${W.range === v ? 'on' : ''}" data-act="wRange" data-v="${v}">${l}</button>`).join('')}</div><button class="link" data-act="wGoal">목표 체중 ${wh.goalValue ? '바꾸기' : '정하기'}</button></div>${weightChart(wh, ser)}` : (wh.goalValue ? '' : '<button class="link" data-act="wGoal">목표 체중 정하기</button>')}</div>`;
+      ${m ? `<div class="wsum w3"><div><b>${f1(avg)}</b><span>7일 평균</span></div><div><b>${hlPaceTxt(hlPace(ser), false)}</b><span>주당 변화</span></div><div><b>${left == null ? '–' : (left > 0 ? '−' : '+') + kg1(Math.abs(left))}</b><span>목표까지</span></div></div>${hlGoalEta(ser, wh)}<div class="row" style="justify-content:space-between"><div class="seg">${[[30, '30일'], [90, '90일'], [0, '전체']].map(([v, l]) => `<button class="${W.range === v ? 'on' : ''}" data-act="wRange" data-v="${v}">${l}</button>`).join('')}</div><button class="link" data-act="wGoal">목표 체중 ${wh.goalValue ? '바꾸기' : '정하기'}</button></div>${weightChart(wh, ser)}` : (wh.goalValue ? '' : '<button class="link" data-act="wGoal">목표 체중 정하기</button>')}</div>`;
   }
   if (wh) wcard = HL.wtOpen ? fold('hlWt', '체중', '', true) + wcard : fold('hlWt', '체중', W.show && ser.length ? '7일 평균 ' + kg1(ser.filter(p => p.d > ymd(new Date(Date.now() - 7 * 86400e3))).reduce((a, p, _, r) => a + p.v / r.length, 0) || ser[ser.length - 1].v) + 'kg' : (ser.length ? '숨김 · ' + ser.length + '일 기록' : '기록을 시작해요'), false);
   box.innerHTML = `<div class="row" style="justify-content:space-between;margin:6px 0 4px"><h2 class="sec" style="margin:10px 0 0">건강</h2><button class="btn ghost" data-act="hlSet">${HL.setOpen ? '설정 닫기' : '⚙ 설정'}</button></div>
