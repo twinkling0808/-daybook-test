@@ -114,7 +114,7 @@ header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;just
 .tabs button.on{color:var(--text);font-weight:700}
 .tabs button:hover{background:var(--hover)}
 
-h2.sec{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.05em;margin:30px 0 10px}
+h2.sec{font-size:14.5px;font-weight:700;color:var(--accent);letter-spacing:.03em;margin:30px 0 10px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
 .muted{color:var(--muted)}
 .small{font-size:13.5px;line-height:1.45}
@@ -754,8 +754,8 @@ body.detailOpen{overflow:hidden}
 .hlhead{display:flex;justify-content:space-between;align-items:center;min-height:40px}
 .hlsect.hlb .hlsum{margin-top:4px}
 .hlacts{gap:14px;margin-top:6px;flex-wrap:wrap}
-.hlfold{display:flex;align-items:center;gap:8px;width:100%;min-height:48px;border-top:1px solid var(--line);background:none;color:inherit;text-align:left;padding:0}
-.hlfold b{font-family:var(--head);font-size:16px}
+.hlfold{display:flex;align-items:center;gap:8px;width:100%;min-height:52px;border:0;border-top:1px solid var(--line);border-radius:0;background:none;color:inherit;text-align:left;padding:0}
+.hlfold b,.hlt{font-family:var(--head);font-size:17px;font-weight:700;line-height:1.2;padding-left:10px;border-left:4px solid var(--accent)}
 .hlfold span{flex:1}
 .hlfold i{font-style:normal;color:var(--muted)}
 .hlsect .trow{padding:4px 0}
@@ -776,7 +776,8 @@ body.detailOpen{overflow:hidden}
 .hlsec{margin:0 0 10px}.hlsec b{display:block;font-size:14px;margin-bottom:2px}.hlsec p{margin:0;font-size:14.5px;line-height:1.7}
 .hlpri{margin:4px 0 0;padding-left:18px}.hlpri li{margin:2px 0}
 details.sect{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-top:12px}
-details.sect>summary{list-style:none;cursor:pointer;padding:13px 14px;font-weight:700;font-size:15.5px;display:flex;justify-content:space-between;align-items:center}
+details.sect{border-left:4px solid var(--accent)}
+details.sect>summary{list-style:none;cursor:pointer;padding:14px 14px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center}
 details.sect>summary::-webkit-details-marker{display:none}
 details.sect>summary::after{content:'+';color:var(--muted);font-size:20px;font-weight:400}
 details.sect[open]>summary::after{content:'–'}
@@ -853,6 +854,7 @@ body.locked #lock{display:flex}
 .hro{display:flex;align-items:center;gap:4px;padding:2px 0;background:var(--bg)}.hro .hron{display:flex;flex-direction:column;min-width:0}.hro .hron b{font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hro .hron small{color:var(--muted);font-size:12.5px}
 .nbsort{background:var(--bg)}.nbsort .nbdrag{margin-left:-6px}
 .dsh{transition:transform .16s ease}.dragging{position:relative;z-index:6;background:var(--surface)!important;box-shadow:0 6px 18px rgba(0,0,0,.18);border-radius:10px;transition:none}
+.wlist{margin:10px 0 2px}.wlist .wrow{display:flex;align-items:baseline;gap:10px;width:100%;padding:11px 4px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--text);font:inherit;text-align:left;min-height:44px}.wlist .wrow span{flex:1;color:var(--muted);font-size:14px}.wlist .wrow b{font-size:16px}.wlist .wrow small{width:52px;color:var(--muted);font-size:12.5px;text-align:right}.wlist .wrow i{font-style:normal;color:var(--muted);font-size:12.5px;text-decoration:underline}
 /* 영수증 3종 (하루 영수증·이번 달 발견·연간 영수증) */
 .rcfold{margin:16px 0 0}.rcfold>.link{font-size:14px}
 .rcp{max-width:300px;margin:12px auto 4px;background:color-mix(in srgb,var(--surface) 90%,#d9cdb0);color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;font-size:12.5px;line-height:1.55;padding:16px 16px 24px;border:1px solid var(--line);-webkit-mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/14px 100%;mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/14px 100%}
@@ -1336,7 +1338,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER = '20261115-3';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER = '20261115-7';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -6174,7 +6176,7 @@ async function foodAiRun(files, kind) {
    - 걸음 수는 따로 칸이 없고 '걸음 8천 보' 같은 체크 습관을 만들어 '모아 볼 습관'에서 골라요.
    - AI 어드바이스(옛 이름 브리핑)는 누를 때만, 음식 이름·숫자 요약만 제미나이로 보내요(일기 본문·사진·이름·장소는 안 보내요).
    ========================================================== */
-const HL = { setOpen: false, busy: false, busyDate: null, more: false, view: 'week', y: null, m: null, sel: null, habMore: false, gal: false, wkOpen: false, calOpen: false, wtOpen: false };
+const HL = { setOpen: false, busy: false, busyDate: null, more: false, view: 'week', y: null, m: null, sel: null, habMore: false, gal: false, wkOpen: false, calOpen: false, wtOpen: false, wlOpen: false, wlMore: false, advOpen: false };
 const HL_BRIEF_KEY = 'lifeos-hbrief';   // '2' = 어드바이스 켜짐(동의함) — 이 폰에만 저장, 백업 안 됨. 옛 버전의 '1'은 켜진 걸로 보되, 보내는 범위가 넓어져서(14일·키) 처음 받을 때 한 번 더 동의를 받아요
 const HL_NAME = 'AI 건강 어드바이스';
 const HL_DIARY_TAG = 'AI 건강 어드바이스', HL_DIARY_TAGS = ['AI 건강 어드바이스', '건강 어드바이스', '건강 브리핑'];   // 옛 태그로 남긴 글도 같이 알아봐요
@@ -6249,7 +6251,7 @@ function hlGalleryCard() {
 
 /* ---- 화면 ---- */
 const hlMacro = d => { const tk = d.c * 4 + d.p * 4 + d.f * 9; return tk > 0 && d.has ? `탄 ${Math.round(d.c * 4 / tk * 100)} · 단 ${Math.round(d.p * 4 / tk * 100)} · 지 ${Math.round(d.f * 9 / tk * 100)}%` : ''; };
-const hlHead = t => `<b style="font-family:var(--head);font-size:16px">${t}</b>`;
+const hlHead = t => `<b class="hlt">${t}</b>`;
 function hlRows(date, by, withGoal, lim) {
   const d = hlDay(date, by), goal = S.health.kcalGoal, wh = weightHabit(), wl = wh && logOf(wh, date), m = W.show, M = '•••', acts = hlActNbs();
   const mealTxt = Object.keys(d.meals).length ? Object.entries(d.meals).map(([k, v]) => `${k} ${hlN(v)}`).join(' · ') : '기록 없음';
@@ -6285,7 +6287,9 @@ function hlTodayBrief() {
   const T = todayStr(), b = S.health.briefs[T], hd = right => `<div class="hlhead">${hlHead(HL_NAME)}${right}</div>`;
   if (HL.busy && HL.busyDate === T) return `<div class="hlsect hlb">${hd('')}<div class="small muted">⏳ 기록을 살펴보고 있어요…</div></div>`;
   if (!b) return `<div class="hlsect hlb">${hd(`<button class="btn sm primary" data-act="hlBrief" data-v="${T}">받기</button>`)}</div>`;
-  return `<div class="hlsect hlb">${hd(`<span class="small muted">${hlDate(T).replace(/ \(.\)/, '')}${b.corner ? ' · ' + esc(b.corner) : ''}</span>`)}${hlBriefBody(T, b)}</div>`;
+  const fold = `<button class="hlfold ${HL.advOpen ? 'open' : ''}" data-act="hlAdvT"><b>${HL_NAME}</b><span class="small muted">${hlDate(T).replace(/ \(.\)/, '')}${b.corner ? ' · ' + esc(b.corner) : ''}</span><i>${HL.advOpen ? '▴' : '▾'}</i></button>`;
+  if (!HL.advOpen) return fold;
+  return fold + `<div class="hlsect hlb">${hlBriefBody(T, b)}</div>`;
 }
 function hlDots(d) {
   return `<span class="hdots"><i class="hdot m ${d.has ? 'on' : ''}"></i><i class="hdot h ${d.hTotal && d.hDone === d.hTotal ? 'on' : (d.hDone ? 'part' : '')}"></i><i class="hdot a ${d.act ? 'on' : ''}"></i></span>`;
@@ -6338,7 +6342,7 @@ function renderHealth() {
     const m = W.show, M = '•••', last = ser[ser.length - 1], r7 = ser.filter(p => p.d > ymd(new Date(Date.now() - 7 * 86400e3))), avg = r7.length ? r7.reduce((s, p) => s + p.v, 0) / r7.length : null;
     const f1 = x => x == null ? '–' : (m ? kg1(x) : M), left = last && wh.goalValue ? last.v - wh.goalValue : null;
     wcard = `<div class="hlsect"><div class="hlhead"><div><span class="small muted">${m ? '' : '숨김 · '}${ser.length}일 기록</span></div><button class="btn sm" data-act="wToggle">${m ? '숨기기' : '보기'}</button></div>
-      ${m ? `<div class="wsum w3"><div><b>${f1(avg)}</b><span>7일 평균</span></div><div><b>${hlPaceTxt(hlPace(ser), false)}</b><span>주당 변화</span></div><div><b>${left == null ? '–' : (left > 0 ? '−' : '+') + kg1(Math.abs(left))}</b><span>목표까지</span></div></div>${hlGoalEta(ser, wh)}<div class="row" style="justify-content:space-between"><div class="seg">${[[30, '30일'], [90, '90일'], [0, '전체']].map(([v, l]) => `<button class="${W.range === v ? 'on' : ''}" data-act="wRange" data-v="${v}">${l}</button>`).join('')}</div><button class="link" data-act="wGoal">목표 체중 ${wh.goalValue ? '바꾸기' : '정하기'}</button></div>${weightChart(wh, ser)}` : (wh.goalValue ? '' : '<button class="link" data-act="wGoal">목표 체중 정하기</button>')}</div>`;
+      ${m ? `<div class="wsum w3"><div><b>${f1(avg)}</b><span>7일 평균</span></div><div><b>${hlPaceTxt(hlPace(ser), false)}</b><span>주당 변화</span></div><div><b>${left == null ? '–' : (left > 0 ? '−' : '+') + kg1(Math.abs(left))}</b><span>목표까지</span></div></div>${hlGoalEta(ser, wh)}<div class="row" style="justify-content:space-between"><div class="seg">${[[30, '30일'], [90, '90일'], [0, '전체']].map(([v, l]) => `<button class="${W.range === v ? 'on' : ''}" data-act="wRange" data-v="${v}">${l}</button>`).join('')}</div><button class="link" data-act="wGoal">목표 체중 ${wh.goalValue ? '바꾸기' : '정하기'}</button></div>${weightChart(wh, ser)}${hlWeightListHtml(ser)}` : (wh.goalValue ? '' : '<button class="link" data-act="wGoal">목표 체중 정하기</button>')}</div>`;
   }
   if (wh) wcard = HL.wtOpen ? fold('hlWt', '체중', '', true) + wcard : fold('hlWt', '체중', W.show && ser.length ? '7일 평균 ' + kg1(ser.filter(p => p.d > ymd(new Date(Date.now() - 7 * 86400e3))).reduce((a, p, _, r) => a + p.v / r.length, 0) || ser[ser.length - 1].v) + 'kg' : (ser.length ? '숨김 · ' + ser.length + '일 기록' : '기록을 시작해요'), false);
   box.innerHTML = `<div class="row" style="justify-content:space-between;margin:6px 0 4px"><h2 class="sec" style="margin:10px 0 0">건강</h2><button class="btn ghost" data-act="hlSet">${HL.setOpen ? '설정 닫기' : '⚙ 설정'}</button></div>
@@ -6365,7 +6369,11 @@ async function healthAct(act, v) {
   const H2 = S.health;
   switch (act) {
     case 'hlSet': HL.setOpen = !HL.setOpen; return renderHealth();
+    case 'hlAdvT': HL.advOpen = !HL.advOpen; return renderHealth();
     case 'hlWeight': return askWeight(v);
+    case 'hlWlToggle': HL.wlOpen = !HL.wlOpen; return renderHealth();
+    case 'hlWlMore': HL.wlMore = true; return renderHealth();
+    case 'hlWOther': return (async () => { const d = await askText('기록할 날짜', todayStr(), '', { inputType: 'date' }); if (!d) return; if (!/^\d{4}-\d{2}-\d{2}$/.test(d) || d > todayStr()) { toast('날짜를 확인해 주세요'); return; } return askWeight(d); })();
     case 'hlFood': return openDayDiet(v);   // 그날 하루 식단 상세 화면 → 닫으면 건강 탭으로 돌아와요
     case 'hlView': HL.view = v; return renderHealth();
     case 'hlPrev': case 'hlNext': {
@@ -6406,7 +6414,7 @@ async function healthAct(act, v) {
     case 'hlWk': HL.wkOpen = !HL.wkOpen; return renderHealth();
     case 'hlWt': HL.wtOpen = !HL.wtOpen; return renderHealth();
     case 'hlCalT': HL.calOpen = !(HL.calOpen || !!HL.sel); if (!HL.calOpen) HL.sel = null; return renderHealth();
-    case 'hlBrief': return hlRunBrief(v);
+    case 'hlBrief': if (v === todayStr()) HL.advOpen = true; return hlRunBrief(v);
     case 'hlBriefDel': {
       if (!H2.briefs[v] || !await askConfirm('어드바이스를 지울까요?', `${hlDate(v)} 어드바이스가 지워져요. 일기로 남긴 글은 그대로예요.`, '지우기')) return;
       delete H2.briefs[v]; await saveHealth(); return renderHealth();
@@ -6548,6 +6556,20 @@ async function hlRunBrief(date) {
     if (date !== todayStr()) { HL.sel = date; HL.calOpen = true; }
   } catch (e) { toast(aiErrMsg(e), 5000); }
   finally { HL.busy = false; HL.busyDate = null; if (S.tab === 'health') renderHealth(); }
+}
+
+/* 체중 지난 기록 목록 — 눌러서 고치거나(비우면 삭제) 다른 날을 기록해요 (2026-11-15) */
+function hlWeightListHtml(ser) {
+  const rows = ser.slice().reverse(), N = HL.wlMore ? rows.length : 14, open = HL.wlOpen;
+  let h = `<div class="wlist"><button class="link" data-act="hlWlToggle">${open ? '기록 목록 닫기 ▴' : `지난 기록 보기·수정 (${ser.length}일) ▾`}</button>`;
+  if (open) {
+    h += rows.slice(0, N).map((p, i) => { const prev = rows[i + 1], df = prev ? p.v - prev.v : null, d = fromYmd(p.d);
+      return `<button class="wrow" data-act="hlWeight" data-v="${p.d}"><span>${d.getMonth() + 1}/${d.getDate()} ${DOW[d.getDay()]}</span><b>${kg1(p.v)}kg</b><small>${df == null || Math.abs(df) < 0.05 ? '' : (df > 0 ? '▲' : '▼') + kg1(Math.abs(df))}</small><i>수정</i></button>`; }).join('');
+    if (!rows.length) h += '<div class="small muted" style="padding:8px 2px">아직 기록이 없어요</div>';
+    if (!HL.wlMore && rows.length > 14) h += `<button class="link" data-act="hlWlMore">더 보기 (${rows.length - 14}일 더)</button>`;
+    h += `<div style="margin-top:8px"><button class="btn sm" data-act="hlWOther">+ 다른 날 기록하기</button></div><div class="small muted" style="margin-top:6px">줄을 누르면 고칠 수 있어요. 값을 비우고 확인하면 그날 기록이 지워져요.</div>`;
+  }
+  return h + '</div>';
 }
 
 /* ==========================================================
