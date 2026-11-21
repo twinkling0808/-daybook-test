@@ -1419,7 +1419,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261121-8';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261121-9';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -5328,7 +5328,7 @@ function initPwa() {
     const i180 = makeIcon(180, { safe: false }), l = document.createElement('link'); l.rel = 'apple-touch-icon'; l.href = i180; document.head.appendChild(l);
     const f = document.createElement('link'); f.rel = 'icon'; f.href = i180; document.head.appendChild(f);
     if (/^https?:$/.test(location.protocol)) {
-      const man = { name: 'DayBook', short_name: 'DayBook', display: 'standalone', background_color: '#33304f', theme_color: '#33304f', start_url: location.href.split('#')[0].split('?')[0], share_target: { action: location.href.split('#')[0].split('?')[0] + '?share=1', method: 'POST', enctype: 'multipart/form-data', params: { files: [{ name: 'photos', accept: ['image/*', 'video/*'] }] } }, icons: [{ src: makeIcon(192), sizes: '192x192', type: 'image/png', purpose: 'any' }, { src: makeIcon(512), sizes: '512x512', type: 'image/png', purpose: 'any' }, { src: makeIcon(192, { safe: true }), sizes: '192x192', type: 'image/png', purpose: 'maskable' }, { src: makeIcon(512, { safe: true }), sizes: '512x512', type: 'image/png', purpose: 'maskable' }] };
+      const man = { name: 'DayBook', short_name: 'DayBook', display: 'standalone', background_color: '#33304f', theme_color: '#33304f', start_url: location.href.split('#')[0].split('?')[0], share_target: { action: location.href.split('#')[0].split('?')[0] + '?share=1', method: 'POST', enctype: 'multipart/form-data', params: { title: 'title', text: 'text', files: [{ name: 'photos', accept: ['image/*', 'video/*'] }] } }, icons: [{ src: makeIcon(192), sizes: '192x192', type: 'image/png', purpose: 'any' }, { src: makeIcon(512), sizes: '512x512', type: 'image/png', purpose: 'any' }, { src: makeIcon(192, { safe: true }), sizes: '192x192', type: 'image/png', purpose: 'maskable' }, { src: makeIcon(512, { safe: true }), sizes: '512x512', type: 'image/png', purpose: 'maskable' }] };
       const m = document.createElement('link'); m.rel = 'manifest'; m.href = URL.createObjectURL(new Blob([JSON.stringify(man)], { type: 'application/manifest+json' })); document.head.appendChild(m);
       if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready).then(() => warmShell()).catch(() => {});
     }
@@ -5815,12 +5815,60 @@ async function loadAll() {
   if (!nbs) await saveNotebooks();
   if (!S.notebooks.includes(D.notebook)) D.notebook = S.notebooks[0];
 }
+/* ---- PARO(골프 앱)에서 공유로 받은 연습·라운드 ----
+   연습: 습관 '골프연습'에 그 날짜로 체크 (메모·레슨 내용이 있을 때만 GOLF 주제에 일기로 남겨요)
+   라운드: GOLF 주제에 일기로 붙여요. 같은 기록을 다시 받아도 일기는 하나만 남아요(id가 같아서 덮어써요). */
+function parseParo(text) {
+  return text.split(/\n\s*\n(?=\s*PARO\/1\s)/).map(b => {
+    const lines = b.trim().split('\n'), m = /^PARO\/1\s+(practice|round)\s*$/.exec(lines[0].trim()); if (!m) return null;
+    const f = {}; for (const ln of lines.slice(1)) { const i = ln.indexOf(':'); if (i > 0) f[ln.slice(0, i).trim()] = ln.slice(i + 1).trim(); }
+    return /^\d{4}-\d{2}-\d{2}$/.test(f.date || '') && f.id ? { kind: m[1], f } : null;
+  }).filter(Boolean);
+}
+async function golfNb() {
+  let nb = S.notebooks.find(n => /^golf$/i.test(n.trim()));
+  if (!nb) { nb = 'GOLF'; S.notebooks.push(nb); await saveNotebooks(); }
+  return nb;
+}
+async function putParoEntry(rec, text) {
+  const id = 'paro_' + rec.f.id, old = S.entries.find(e => e.id === id), date = rec.f.date, today = todayStr();
+  const ts = old ? old.ts : (date >= today ? Date.now() : fromYmd(date, 23, 0).getTime());
+  const e = { ...(old || {}), id, type: 'log', notebook: await golfNb(), mood: old ? old.mood : null, text, photos: old ? old.photos : [], files: old ? old.files : [], ts, createdAt: old ? old.createdAt : Date.now(),
+    place: old ? old.place : '', lat: old ? old.lat : null, lon: old ? old.lon : null, weather: old ? old.weather : null, tags: old ? old.tags : ['PARO', '골프'], fav: old ? old.fav : false, meal: null };
+  if (old) e.updatedAt = Date.now();
+  await DB.put('entries', e); upsertLocal(e); return !!old;
+}
+async function receiveParo(text) {
+  const recs = parseParo(text); if (!recs.length) { toast('PARO에서 온 글을 읽지 못했어요'); return; }
+  const done = [];
+  for (const rec of recs) {
+    const f = rec.f, md = f.date.slice(5).replace('-', '/');
+    try {
+      if (rec.kind === 'practice') {
+        const h = S.habits.find(x => x.name === '골프연습');
+        if (h) { const date = f.date > todayStr() ? todayStr() : f.date; await markHabit(h, date, h.kind === 'value' && +f.minutes > 0 ? +f.minutes : null); done.push(`골프연습 ${md} 체크`); }
+        else done.push('습관 "골프연습"을 찾지 못했어요');
+        if (f.memo || f.lesson) {
+          const body = [`[PARO 연습] ${md}${f.minutes ? ' · ' + f.minutes + '분' : ''}`, f.items, f.lesson ? '레슨: ' + f.lesson : '', f.memo ? '메모: ' + f.memo : ''].filter(Boolean).join('\n');
+          await putParoEntry(rec, body); done.push('GOLF 일기');
+        }
+      } else {
+        const body = [`[PARO 라운드] ${md}${f.course ? ' ' + f.course : ''}`, f.score, f.nines, f.memo ? '메모: ' + f.memo : ''].filter(Boolean).join('\n');
+        await putParoEntry(rec, body); done.push(`라운드 ${md} GOLF 일기`);
+      }
+    } catch (err) { done.push('저장 실패'); }
+  }
+  renderActive(); toast('PARO에서 받았어요 · ' + done.join(' · '), 4200);
+}
 async function consumeShared() {
   try {
     if (!('caches' in window) || !(await caches.has('daybook-share'))) return;
     if (document.body.classList.contains('locked')) { setTimeout(consumeShared, 1200); return; }
-    const c = await caches.open('daybook-share'), reqs = (await c.keys()).sort((a, b) => parseInt(a.url.split('__share/')[1]) - parseInt(b.url.split('__share/')[1]));
-    if (!reqs.length) return;
+    const c = await caches.open('daybook-share'), keys = await c.keys(), reqs = keys.filter(k => k.url.includes('__share/')).sort((a, b) => parseInt(a.url.split('__share/')[1]) - parseInt(b.url.split('__share/')[1]));
+    const tq = keys.find(k => k.url.includes('__sharetext')), sharedText = tq ? await (await c.match(tq)).text() : '';
+    if (!reqs.length && !sharedText) return;
+    if (sharedText) { await c.delete(tq); if (/^\s*PARO\/1\s/.test(sharedText)) { await receiveParo(sharedText); if (!reqs.length) { await caches.delete('daybook-share'); return; } } }
+    if (!reqs.length) { await caches.delete('daybook-share'); return; }
     const files = [];
     for (const q of reqs) { const r = await c.match(q), b = await r.blob(); files.push(new File([b], decodeURIComponent(r.headers.get('X-Name') || 'photo'), { type: r.headers.get('X-Type') || b.type, lastModified: +r.headers.get('X-Mod') || 0 })); }
     await caches.delete('daybook-share');

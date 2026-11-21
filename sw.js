@@ -1,5 +1,5 @@
 /* DayBook — 오프라인에서도 앱이 열리게 하는 파일입니다. (일기 데이터는 기기의 IndexedDB에 따로 저장돼요) */
-const CACHE = 'daybook-shell-v3';
+const CACHE = 'daybook-shell-v4';
 const SHARE = 'daybook-share';
 const SHELL = ['./', 'index.html'];
 self.addEventListener('install', e => {
@@ -19,6 +19,8 @@ self.addEventListener('fetch', e => {
         const fd = await r.formData(), files = fd.getAll('photos').filter(f => f && typeof f !== 'string');
         await caches.delete(SHARE);
         const c = await caches.open(SHARE);
+        const txt = [fd.get('title'), fd.get('text')].filter(v => typeof v === 'string' && v.trim()).join('\n');   /* PARO(골프 앱)가 보낸 글 등 */
+        if (txt) await c.put(new Request(new URL('__sharetext', self.registration.scope).href), new Response(txt, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } }));
         let i = 0;
         for (const f of files) await c.put(new Request(new URL('__share/' + (i++), self.registration.scope).href), new Response(f, { headers: { 'X-Name': encodeURIComponent(f.name || 'photo'), 'X-Type': f.type || '', 'X-Mod': String(f.lastModified || 0), 'Content-Type': f.type || 'application/octet-stream' } }));
       } catch (err) {}
