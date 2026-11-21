@@ -1388,7 +1388,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261121-2';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261121-3';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -3341,7 +3341,7 @@ function renderReview() {
       + (moodRows.length ? `\n\n### 기분\n${jn(moodRows, ([k, n]) => `${k} ${n}`)}` : '')
       + (nbRows.length ? `\n\n### 주제\n${jn(nbRows, ([k, n]) => `${k} ${n}`)}` : '')
       + (tagRows.length ? `\n\n### 자주 쓴 태그\n${jn(tagRows, ([t, n]) => `#${t} ${n}`)}` : '')
-      + (hrows.length ? `\n\n### 습관 달성률\n${hrows.map(({ h, r }) => `- ${h.name} ${Math.round(r.done / r.due * 100)}% (${r.done}/${r.due}일)`).join('\n')}` : '') };
+      + (hrows.length ? `\n\n### 습관 달성률\n${hrows.map(({ h, r }) => `- ${h.name} ${Math.round(r.done / r.due * 100)}% (${r.done}/${r.due}${isCount(h) ? '회' : '일'})`).join('\n')}` : '') };
   const rcTop = isM ? (rv.y === new Date().getFullYear() && rv.m === new Date().getMonth() ? rcDiscoverHtml() : '') : rcYearHtml(rv.y);
   $('#sub-review').innerHTML = `<div class="row" style="justify-content:space-between;margin-bottom:12px"><div class="seg"><button class="${isM ? 'on' : ''}" data-act="rvMode" data-v="month">월</button><button class="${!isM ? 'on' : ''}" data-act="rvMode" data-v="year">연</button></div>
     <div class="weeknav" style="margin:0"><button class="btn sm ghost" data-act="rvPrev">‹</button><span class="wl">${title}</span><button class="btn sm ghost" data-act="rvNext">›</button></div></div>
@@ -3745,7 +3745,7 @@ function habitRate(h, a, b) {
     const r = hv(h, k);
     if (isCount(r)) {   // 횟수 습관: 한 기간(주/월)을 한 칸으로 셈 (기간은 그 기간 첫날의 규칙대로)
       const [pa, pb] = periodOf(r, k), key = r.freq.type + pa; if (seen.has(key)) return; seen.add(key);
-      const met = periodCount(h, pa, pb) >= (hv(h, pa).freq || r.freq).n; if (pb < today || met) { due++; if (met) done++; }
+      const nn = (hv(h, pa).freq || r.freq).n, cnt = periodCount(h, pa, pb), met = cnt >= nn; if (pb < today || met) { due += nn; done += Math.min(cnt, nn); }   // 주·월 N회 습관은 ‘회’ 단위로 부분 점수(3회 중 2회 = 66%)
       return;
     }
     if (!isDue(h, k)) return;
@@ -3812,11 +3812,13 @@ function habitHeatHtml(h) {
       if (k < h.startDate && !logOf(h, k)) { continue; }
       const dn = isDoneOn(h, k), lg = logOf(h, k);
       if (dn) nDone++;
-      cells.push(`<rect x="${col * 7}" y="${r * 7}" width="6" height="6" rx="1.4" class="${dn ? (lg && lg.backfill ? 'b' : 'd') : 'm'}"/>`);
+      cells.push({ c: col, r, cls: dn ? (lg && lg.backfill ? 'b' : 'd') : 'm' });
     }
   }
   if (!nDone) return '';
-  return `<div class="hheat"><div class="hhs">지난 1년 · <b>${nDone}일</b> 체크했어요</div><svg viewBox="0 0 ${col * 7 - 1} 48" role="img" aria-label="지난 1년 체크한 날 ${nDone}일">${cells.join('')}</svg></div>`;
+  const c0 = Math.min(...cells.map(x => x.c)), c1 = Math.max(...cells.map(x => x.c)), nc = c1 - c0 + 1;   // 습관이 시작된 주부터 그려서 왼쪽이 비지 않게
+  const rects = cells.map(x => `<rect x="${(x.c - c0) * 7}" y="${x.r * 7}" width="6" height="6" rx="1.4" class="${x.cls}"/>`).join('');
+  return `<div class="hheat"><div class="hhs">지난 1년 · <b>${nDone}일</b> 체크했어요</div><svg viewBox="0 0 ${nc * 7 - 1} 48" style="max-width:${nc * 15}px" role="img" aria-label="지난 1년 체크한 날 ${nDone}일">${rects}</svg></div>`;
 }
 function msList(h) { if (!h.goal) return []; const N = h.goal.days; return [...new Set([...MS_BASE.filter(m => m < N), N])]; }
 
