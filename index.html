@@ -1419,7 +1419,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261121-9';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261121-10';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -5834,7 +5834,7 @@ async function putParoEntry(rec, text) {
   const id = 'paro_' + rec.f.id, old = S.entries.find(e => e.id === id), date = rec.f.date, today = todayStr();
   const ts = old ? old.ts : (date >= today ? Date.now() : fromYmd(date, 23, 0).getTime());
   const e = { ...(old || {}), id, type: 'log', notebook: await golfNb(), mood: old ? old.mood : null, text, photos: old ? old.photos : [], files: old ? old.files : [], ts, createdAt: old ? old.createdAt : Date.now(),
-    place: old ? old.place : '', lat: old ? old.lat : null, lon: old ? old.lon : null, weather: old ? old.weather : null, tags: old ? old.tags : ['PARO', '골프'], fav: old ? old.fav : false, meal: null };
+    place: old ? old.place : '', lat: old ? old.lat : null, lon: old ? old.lon : null, weather: old ? old.weather : null, tags: old ? old.tags : extractTags(text), fav: old ? old.fav : false, meal: null };
   if (old) e.updatedAt = Date.now();
   await DB.put('entries', e); upsertLocal(e); return !!old;
 }
@@ -5849,11 +5849,11 @@ async function receiveParo(text) {
         if (h) { const date = f.date > todayStr() ? todayStr() : f.date; await markHabit(h, date, h.kind === 'value' && +f.minutes > 0 ? +f.minutes : null); done.push(`골프연습 ${md} 체크`); }
         else done.push('습관 "골프연습"을 찾지 못했어요');
         if (f.memo || f.lesson) {
-          const body = [`[PARO 연습] ${md}${f.minutes ? ' · ' + f.minutes + '분' : ''}`, f.items, f.lesson ? '레슨: ' + f.lesson : '', f.memo ? '메모: ' + f.memo : ''].filter(Boolean).join('\n');
+          const body = [`[PARO 연습] ${md}${f.minutes ? ' · ' + f.minutes + '분' : ''}`, f.items, f.lesson ? '레슨: ' + f.lesson : '', f.memo ? '메모: ' + f.memo : '', '#PARO'].filter(Boolean).join('\n');
           await putParoEntry(rec, body); done.push('GOLF 일기');
         }
       } else {
-        const body = [`[PARO 라운드] ${md}${f.course ? ' ' + f.course : ''}`, f.score, f.nines, f.memo ? '메모: ' + f.memo : ''].filter(Boolean).join('\n');
+        const body = [`[PARO 라운드] ${md}${f.course ? ' ' + f.course : ''}`, f.score, f.nines, f.memo ? '메모: ' + f.memo : '', '#PARO'].filter(Boolean).join('\n');
         await putParoEntry(rec, body); done.push(`라운드 ${md} GOLF 일기`);
       }
     } catch (err) { done.push('저장 실패'); }
