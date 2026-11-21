@@ -1388,7 +1388,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER = '20261121-1';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261121-2';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -5915,7 +5915,7 @@ async function buildFullBackup(pass, onProg, limit = 1 * GB) {
   const total = groups.length, date = ymd(new Date()), parts = [];
   for (let k = 0; k < total; k++) {
     const man = { app: 'LifeOS', v: 4, enc: !!pass, salt, part: k + 1, parts: total, createdAt: new Date().toISOString() };
-    parts.push({ name: `LifeOS-backup-${date}${total > 1 ? `-part${k + 1}of${total}` : ''}.zip`, blob: await makeZip([{ name: 'manifest.json', blob: new Blob([JSON.stringify(man)]) }, ...groups[k]]) });
+    parts.push({ name: `DayBook-backup-${date}${total > 1 ? `-part${k + 1}of${total}` : ''}.zip`, blob: await makeZip([{ name: 'manifest.json', blob: new Blob([JSON.stringify(man)]) }, ...groups[k]]) });
   }
   return parts;
 }
@@ -5965,7 +5965,7 @@ async function importLegacyJson(file) {
     data = obj;
   } catch { toast('파일을 읽을 수 없어요'); return; }
   if (data && data.app !== 'LifeOS' && Array.isArray(data.entries) && data.metadata) return redirectDayOne([file]);
-  if (!data || data.app !== 'LifeOS' || !Array.isArray(data.entries)) { toast('LifeOS 백업 파일이 아니에요'); return; }
+  if (!data || data.app !== 'LifeOS' || !Array.isArray(data.entries)) { toast('DayBook 백업 파일이 아니에요'); return; }
   return restoreData(data, null);
 }
 function redirectDayOne(files) {
@@ -5979,7 +5979,7 @@ async function importZipBackup(files, ext) {
   const mE = all['manifest.json'];
   if (!mE) {
     if (Object.keys(all).some(n => /\.json$/i.test(n))) return redirectDayOne(files);
-    toast('LifeOS 백업 파일이 아니에요'); return;
+    toast('DayBook 백업 파일이 아니에요'); return;
   }
   const man = JSON.parse(await (await zipEntryBlob(mE)).text());
   const dE = all['data.json'] || all['data.json.enc'];
@@ -6192,11 +6192,11 @@ async function driveBackup() {
     driveMsg('글·설정 백업 올리는 중…');
     const data = new Blob([JSON.stringify(backupData())]), man = { app: 'LifeOS', v: 4, enc: !!k.key, salt: k.salt, mediaPrefix: pre, external: true, createdAt: new Date().toISOString() };
     const zip = await makeZip([{ name: 'manifest.json', blob: new Blob([JSON.stringify(man)]) }, { name: k.key ? 'data.json.enc' : 'data.json', blob: k.key ? await encryptBlob(data, k.key) : data }]);
-    const fname = `LifeOS-text-${ymd(new Date())}.zip`;
+    const fname = `DayBook-text-${ymd(new Date())}.zip`;
     for (const f of await dList(root, ` and name='${fname}'`)) await dDel(f.id);
     await dUploadSmall(fname, root, zip);
     const keep = Math.max(2, +lsGet(DRIVE.keepKey, '4') || 4);
-    const olds = (await dList(root)).filter(f => /^LifeOS-text-.*\.zip$/.test(f.name)).sort((a, b) => a.name < b.name ? 1 : -1).slice(keep);
+    const olds = (await dList(root)).filter(f => /^(LifeOS|DayBook)-text-.*\.zip$/.test(f.name)).sort((a, b) => a.name < b.name ? 1 : -1).slice(keep);
     for (const f of olds) await dDel(f.id);
     lsSet(DRIVE.lastKey, String(Date.now())); backupDismissed = false;
     driveMsg(`✓ Drive 백업 완료 · 새 첨부 ${todo.length}개 · 글 백업은 최근 ${keep}개만 보관`);
@@ -6209,9 +6209,9 @@ async function driveRestore() {
   try {
     await driveToken();
     const root = await dFolder('LifeOS 백업');
-    const list = (await dList(root)).filter(f => /^LifeOS-text-.*\.zip$/.test(f.name)).sort((a, b) => a.name < b.name ? 1 : -1).slice(0, 6);
+    const list = (await dList(root)).filter(f => /^(LifeOS|DayBook)-text-.*\.zip$/.test(f.name)).sort((a, b) => a.name < b.name ? 1 : -1).slice(0, 6);
     if (!list.length) { toast('Drive에 백업이 없어요'); return; }
-    const pick = await modal({ title: 'Drive에서 복원', message: '복원할 백업을 고르세요 (최신순)', buttons: [{ label: '취소', value: null }, ...list.map((f, i) => ({ label: f.name.replace(/^LifeOS-text-|\.zip$/g, ''), value: f.id, primary: i === 0 }))], cancelValue: null });
+    const pick = await modal({ title: 'Drive에서 복원', message: '복원할 백업을 고르세요 (최신순)', buttons: [{ label: '취소', value: null }, ...list.map((f, i) => ({ label: f.name.replace(/^(LifeOS|DayBook)-text-|\.zip$/g, ''), value: f.id, primary: i === 0 }))], cancelValue: null });
     if (!pick) return;
     driveMsg('백업을 내려받는 중…');
     const zip = await dGet(pick), mediaF = await dFolder('첨부', root), index = new Map((await dList(mediaF)).map(f => [f.name, f.id]));
