@@ -522,8 +522,6 @@ html,body{overflow-x:hidden}
 .rvhd{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}.rvhd summary{cursor:pointer;font-size:14px;font-weight:700;padding:6px 0;min-height:32px}
 .rvhr{display:grid;grid-template-columns:64px minmax(0,1fr);gap:6px;align-items:center;margin:0 0 7px;font-size:12px}.rvhr span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .rvhg{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:2px}.rvhg i{aspect-ratio:1/1;border-radius:2px;display:block;background:color-mix(in srgb,var(--line) 55%,transparent)}.rvhg i.d{background:var(--accent)}.rvhg i.f{opacity:.35}.rvhg i.x{opacity:.15}
-.hheat{margin:12px 0 2px}.hheat .hhs{font-size:12.5px;color:var(--muted);margin-bottom:6px}.hheat .hhs b{color:var(--text);font-weight:700}.hheat svg{display:block;width:100%;height:auto}
-.hheat rect.d{fill:var(--accent)}.hheat rect.b{fill:var(--amber)}.hheat rect.m{fill:var(--line);opacity:.5}
 /* ===== 손글씨 ===== */
 .handview{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
 .handview .hwbar{display:flex;align-items:center;gap:6px;padding:8px 10px;flex-wrap:wrap;flex:none}.handview .hwbar2{padding-top:0}.handview .hsp{flex:1}
@@ -1396,7 +1394,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261121-5';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261121-6';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -3815,23 +3813,6 @@ function habitSummaryHtml(h, u) {
   } catch { return ''; }
 }
 /* 지난 1년 히트맵: 칸 하나 = 하루(월요일부터 위→아래, 왼→오). 한 날=강조색, 나중에 적은 날=주황, 안 한 날=연한 색. 주 몇 회 습관도 날마다 체크한 날로 표시 */
-function habitHeatHtml(h) {
-  const today = todayStr(), t0 = fromYmd(today), s0 = startOfWeek(new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() - 364));
-  const cells = []; let nDone = 0, col = 0;
-  for (let d = new Date(s0); ymd(d) <= today; d.setDate(d.getDate() + 7), col++) {
-    for (let r = 0; r < 7; r++) {
-      const k = ymd(new Date(d.getFullYear(), d.getMonth(), d.getDate() + r)); if (k > today) break;
-      if (k < h.startDate && !logOf(h, k)) { continue; }
-      const dn = isDoneOn(h, k), lg = logOf(h, k);
-      if (dn) nDone++;
-      cells.push({ c: col, r, cls: dn ? (lg && lg.backfill ? 'b' : 'd') : 'm' });
-    }
-  }
-  if (!nDone) return '';
-  const c0 = Math.min(...cells.map(x => x.c)), c1 = Math.max(...cells.map(x => x.c)), nc = c1 - c0 + 1;   // 습관이 시작된 주부터 그려서 왼쪽이 비지 않게
-  const rects = cells.map(x => `<rect x="${(x.c - c0) * 7}" y="${x.r * 7}" width="6" height="6" rx="1.4" class="${x.cls}"/>`).join('');
-  return `<div class="hheat"><div class="hhs">지난 1년 · <b>${nDone}일</b> 체크했어요</div><svg viewBox="0 0 ${nc * 7 - 1} 48" style="max-width:${nc * 15}px" role="img" aria-label="지난 1년 체크한 날 ${nDone}일">${rects}</svg></div>`;
-}
 /* ---- 돌아보기: 습관 전체 히트맵 (월=달력형 + ‘습관별 보기’ 펼치기, 연=한 줄 히트맵). 그날 한 습관이 많을수록 진해져요 ---- */
 function rvhDay(hs, k) {
   let act = 0, done = 0;
@@ -3989,7 +3970,7 @@ function habitCardHtml(h) {
   const chk = `<button class="hchk ${dd ? (log.backfill ? 'lateb' : 'done') : (log ? 'partial' : '')}" ${due ? '' : 'disabled'} data-act="hcell" data-h="${h.id}" data-d="${today}" aria-label="오늘 ${esc(h.name)} 체크">${btn}</button>`;
   const lm = h.logMode === 'weekly' ? '주간 통계 글' : h.logMode === 'none' ? '기록 안 남김' : '';
   const info = [h.notebook && h.logMode !== 'none' ? '노트북 ' + esc(h.notebook) : '', lm].filter(Boolean).join(' · ');
-  const panel = open ? `<div class="hpanel">${h.note ? `<div class="small" style="margin-bottom:8px">${esc(h.note)}</div>` : ''}${habitMonthHtml(h)}${habitHeatHtml(h)}${h.goal ? challengeHtml(h) : ''}${info ? `<div class="small muted" style="margin-top:8px">${info}</div>` : ''}<div class="hleg"><span><i class="a"></i>한 날</span><span><i class="b"></i>나중에 적은 날</span><span><i class="c"></i>안 한 날</span></div><div class="hactions"><button class="btn sm" data-act="hEdit" data-id="${h.id}">수정</button><button class="btn sm" data-act="hArch" data-id="${h.id}">보관</button><button class="btn sm danger" data-act="hDel" data-id="${h.id}">삭제</button></div></div>` : '';
+  const panel = open ? `<div class="hpanel">${h.note ? `<div class="small" style="margin-bottom:8px">${esc(h.note)}</div>` : ''}${habitMonthHtml(h)}${h.goal ? challengeHtml(h) : ''}${info ? `<div class="small muted" style="margin-top:8px">${info}</div>` : ''}<div class="hleg"><span><i class="a"></i>한 날</span><span><i class="b"></i>나중에 적은 날</span><span><i class="c"></i>안 한 날</span></div><div class="hactions"><button class="btn sm" data-act="hEdit" data-id="${h.id}">수정</button><button class="btn sm" data-act="hArch" data-id="${h.id}">보관</button><button class="btn sm danger" data-act="hDel" data-id="${h.id}">삭제</button></div></div>` : '';
   return `<div class="hitem ${open ? 'open' : ''}"><div class="hrow"><button class="hn1" data-act="hOpen" data-id="${h.id}" aria-expanded="${open}"><b><span class="nm">${esc(h.name)}</span>${tag}</b><span>${esc(sub)}</span>${subHtml ? `<span class="hsum">${subHtml}</span>` : ''}</button>${right}${chk}</div>${pct != null ? `<div class="hbar"><i style="width:${pct}%"></i></div>` : ''}${panel}</div>`;
 }
 /* 끝낸 습관은 지우지 않고 보관: 기록·달성률은 그대로 남고, 오늘 할 일·목록에서만 빠져요(h.archived = 보관한 날) */
