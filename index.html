@@ -514,6 +514,14 @@ html,body{overflow-x:hidden}
 .seal-s .trp{display:block}.stamp .seal .trp{display:block}.b-stamp .trp{vertical-align:-1px}
 .hbest{display:inline-flex;align-items:center;gap:3px;color:var(--amber);font-weight:600}.hbest .trp{flex:none}
 .hn1 span.hsum{white-space:normal;line-height:1.35}
+.rvhm{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.rvhw{text-align:center;font-size:11.5px;color:var(--muted);padding-bottom:2px}
+.rvhc{aspect-ratio:1/1;border-radius:6px;font-size:11.5px;padding:3px 4px;color:var(--text)}.rvhc.x{visibility:hidden}.rvhc.f{opacity:.35}
+.rvhc.l0,.rvhlg i.l0,.rvhy .l0{background:color-mix(in srgb,var(--line) 55%,transparent)}.rvhc.l1,.rvhlg i.l1{background:color-mix(in srgb,var(--accent) 28%,transparent)}.rvhc.l2,.rvhlg i.l2{background:color-mix(in srgb,var(--accent) 52%,transparent)}.rvhc.l3,.rvhlg i.l3{background:color-mix(in srgb,var(--accent) 76%,transparent);color:#fff}.rvhc.l4,.rvhlg i.l4{background:var(--accent);color:#fff}
+.rvhy{display:block;width:100%;height:auto}.rvhy text{font-size:8px;fill:var(--muted)}.rvhy .l0{fill:color-mix(in srgb,var(--line) 55%,transparent);background:none}.rvhy .l1{fill:color-mix(in srgb,var(--accent) 28%,transparent)}.rvhy .l2{fill:color-mix(in srgb,var(--accent) 52%,transparent)}.rvhy .l3{fill:color-mix(in srgb,var(--accent) 76%,transparent)}.rvhy .l4{fill:var(--accent)}
+.rvhlg{display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:11px;color:var(--muted);margin-top:8px}.rvhlg i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.rvhd{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}.rvhd summary{cursor:pointer;font-size:14px;font-weight:700;padding:6px 0;min-height:32px}
+.rvhr{display:grid;grid-template-columns:64px minmax(0,1fr);gap:6px;align-items:center;margin:0 0 7px;font-size:12px}.rvhr span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.rvhg{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:2px}.rvhg i{aspect-ratio:1/1;border-radius:2px;display:block;background:color-mix(in srgb,var(--line) 55%,transparent)}.rvhg i.d{background:var(--accent)}.rvhg i.f{opacity:.35}.rvhg i.x{opacity:.15}
 .hheat{margin:12px 0 2px}.hheat .hhs{font-size:12.5px;color:var(--muted);margin-bottom:6px}.hheat .hhs b{color:var(--text);font-weight:700}.hheat svg{display:block;width:100%;height:auto}
 .hheat rect.d{fill:var(--accent)}.hheat rect.b{fill:var(--amber)}.hheat rect.m{fill:var(--line);opacity:.5}
 /* ===== 손글씨 ===== */
@@ -1388,7 +1396,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261121-4';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261121-5';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -3354,6 +3362,7 @@ function renderReview() {
     <div class="card" style="margin-top:12px"><div class="moodlabel">감정</div>${bars(moodRows, k => (MOODS[k] || {}).c || 'var(--accent)')}</div>
     <div class="card" style="margin-top:12px"><div class="moodlabel">주제</div>${bars(nbRows, k => nbColor(k))}</div>
     ${tagRows.length ? `<div class="card" style="margin-top:12px"><div class="moodlabel">자주 쓴 태그</div><div class="chips">${tagRows.map(([t, n]) => `<button class="chip tg" data-act="tagGo" data-v="${esc(t)}">#${esc(t)} ${n}</button>`).join('')}</div></div>` : ''}
+    ${habitReviewHeatHtml(isM)}
     ${hrows.length ? `<div class="card" style="margin-top:12px"><div class="moodlabel">습관 달성률 (쉬는 날 제외)</div><div class="bars">${hrows.map(({ h, r }) => `<div class="brow"><span class="bl">${esc(h.name)}</span><span class="bt"><i style="width:${Math.round(r.done / r.due * 100)}%"></i></span><span class="bn">${Math.round(r.done / r.due * 100)}%</span></div>`).join('')}</div></div>` : ''}
     <div class="card" style="margin-top:12px;text-align:center"><button class="btn" data-act="rvPost">이 돌아보기를 일기로 남기기</button><div class="small muted" style="margin-top:8px">직접 누를 때만 만들어져요. 맨 아래에 ‘${noteHead}’를 적을 자리가 생겨요.</div></div>`;
 }
@@ -3822,6 +3831,44 @@ function habitHeatHtml(h) {
   const c0 = Math.min(...cells.map(x => x.c)), c1 = Math.max(...cells.map(x => x.c)), nc = c1 - c0 + 1;   // 습관이 시작된 주부터 그려서 왼쪽이 비지 않게
   const rects = cells.map(x => `<rect x="${(x.c - c0) * 7}" y="${x.r * 7}" width="6" height="6" rx="1.4" class="${x.cls}"/>`).join('');
   return `<div class="hheat"><div class="hhs">지난 1년 · <b>${nDone}일</b> 체크했어요</div><svg viewBox="0 0 ${nc * 7 - 1} 48" style="max-width:${nc * 15}px" role="img" aria-label="지난 1년 체크한 날 ${nDone}일">${rects}</svg></div>`;
+}
+/* ---- 돌아보기: 습관 전체 히트맵 (월=달력형 + ‘습관별 보기’ 펼치기, 연=한 줄 히트맵). 그날 한 습관이 많을수록 진해져요 ---- */
+function rvhDay(hs, k) {
+  let act = 0, done = 0;
+  hs.forEach(h => { const dn = isDoneOn(h, k); if (!dn && (k < h.startDate || (h.archived && k > h.archived))) return; act++; if (dn) done++; });
+  return { act, done, lv: !act ? -1 : !done ? 0 : done / act <= .25 ? 1 : done / act <= .5 ? 2 : done / act <= .75 ? 3 : 4 };
+}
+function habitReviewHeatHtml(isM) {
+  const hs = S.habits.filter(h => !h.mask && h.preset !== 'weight'); if (!hs.length) return '';
+  const today = todayStr(); let body = '', nd = 0;
+  const leg = '<div class="rvhlg">적게<i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>많이</div>';
+  if (isM) {
+    const y = rv.y, m = rv.m, n = new Date(y, m + 1, 0).getDate(), off = (new Date(y, m, 1).getDay() + 6) % 7, key = d => `${y}-${pad(m + 1)}-${pad(d)}`;
+    let cells = WK.map(d => `<div class="rvhw">${d}</div>`).join('') + '<div class="rvhc x"></div>'.repeat(off);
+    for (let d = 1; d <= n; d++) {
+      const k = key(d); if (k > today) { cells += `<div class="rvhc f">${d}</div>`; continue; }
+      const r = rvhDay(hs, k); if (r.done) nd++; cells += `<div class="rvhc l${Math.max(r.lv, 0)}">${d}</div>`;
+    }
+    const rows = hs.filter(h => h.startDate <= key(n) && !(h.archived && h.archived < key(1))).map(h => {
+      let g = ''; for (let d = 1; d <= n; d++) { const k = key(d), dn = k <= today && isDoneOn(h, k); g += `<i class="${dn ? 'd' : k > today ? 'f' : (k < h.startDate || (h.archived && k > h.archived)) ? 'x' : ''}"></i>`; }
+      return `<div class="rvhr"><span>${esc(h.name)}</span><div class="rvhg" style="--n:${n}">${g}</div></div>`;
+    }).join('');
+    body = `<div class="rvhm">${cells}</div>${leg}${rows ? `<details class="rvhd"><summary>습관별 보기</summary>${rows}</details>` : ''}`;
+  } else {
+    const y = rv.y, j1 = new Date(y, 0, 1), s0 = startOfWeek(j1), end = new Date(y, 11, 31); let col = 0, cells = '', lab = '', lm = -1;
+    for (let d = new Date(s0); d <= end; d.setDate(d.getDate() + 7), col++) {
+      for (let r = 0; r < 7; r++) {
+        const dt = new Date(d.getFullYear(), d.getMonth(), d.getDate() + r); if (dt.getFullYear() !== y) continue;
+        const k = ymd(dt); if (k > today) break;
+        const q = rvhDay(hs, k); if (q.done) nd++;
+        cells += `<rect x="${col * 7}" y="${r * 7 + 11}" width="6" height="6" rx="1.4" class="l${Math.max(q.lv, 0)}"/>`;
+        if (r === 0 || true) { const mo = dt.getMonth(); if (mo !== lm && dt.getDate() <= 7) { lab += `<text x="${col * 7}" y="8">${mo + 1}월</text>`; lm = mo; } }
+      }
+    }
+    body = `<svg class="rvhy" viewBox="0 0 ${col * 7 - 1} 60" role="img" aria-label="${y}년 습관 히트맵">${lab}${cells}</svg>${leg}`;
+  }
+  if (!nd) return '';
+  return `<div class="card" style="margin-top:12px"><div class="moodlabel">습관 한눈에 보기</div><div class="small muted" style="margin:-2px 0 10px">${nd}일 체크했어요 · 그날 한 습관이 많을수록 진해져요</div>${body}</div>`;
 }
 function msList(h) { if (!h.goal) return []; const N = h.goal.days; return [...new Set([...MS_BASE.filter(m => m < N), N])]; }
 
