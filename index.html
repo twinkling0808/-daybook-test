@@ -1388,7 +1388,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261121-3';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261121-4';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -2674,14 +2674,15 @@ async function decoToggleNoBg() {
    - 펜(또는 마우스)만 그려요. 손가락·손바닥은 무시. 필압이 있으면 굵기에 반영.
    - 그림(PNG)으로 저장돼서 검색은 안 돼요. 저장 구조는 사진 첨부와 같은 방식(addFiles)이라 기존 기록·백업에 영향 없음.
    ========================================================== */
-const HAND = { open: false, strokes: [], cur: null, color: '#1f2430', w: 3, eraser: false, cv: null, ctx: null, dpr: 1, cssW: 0, cssH: 0 };
+const HAND_TK = 'lifeos-handtouch';
+const HAND = { touch: (() => { try { return localStorage.getItem(HAND_TK) === '1'; } catch { return false; } })(), pid: null, open: false, strokes: [], cur: null, color: '#1f2430', w: 3, eraser: false, cv: null, ctx: null, dpr: 1, cssW: 0, cssH: 0 };
 const HAND_COLORS = ['#1f2430', '#2b4fa8', '#c0392b'];
 const HAND_WIDTHS = [[2, '가늘게'], [3.5, '보통'], [6, '굵게']];
 function handOpen() {
   if (HAND.open) return;
   HAND.open = true; HAND.strokes = []; HAND.cur = null; HAND.eraser = false;
   const el = document.createElement('div'); el.id = 'handView'; el.className = 'handview';
-  el.innerHTML = `<div class="hwbar"><button class="btn ghost sm" data-act="handCancel">취소</button><span class="hsp"></span><button class="btn primary sm" data-act="handDone">첨부</button></div>
+  el.innerHTML = `<div class="hwbar"><button class="btn ghost sm" data-act="handCancel">취소</button><span class="hsp"></span><button class="btn ghost sm" id="handTk" data-act="handTouch" aria-pressed="false">터치펜</button><button class="btn primary sm" data-act="handDone">첨부</button></div>
     <div class="hwbar hwbar2"><span class="hcols">${HAND_COLORS.map(c => `<button class="hcol" data-act="handColor" data-v="${c}" style="--c:${c}" aria-label="색"></button>`).join('')}</span><span class="hsp"></span>${HAND_WIDTHS.map(([w, l]) => `<button class="btn ghost sm hw" data-act="handW" data-v="${w}">${l}</button>`).join('')}</div>
     <div class="hwbar hwbar2"><button class="btn ghost sm" id="handEr" data-act="handEraser" aria-pressed="false">지우개</button><button class="btn ghost sm" data-act="handUndo">되돌리기</button><span class="hsp"></span><button class="btn ghost sm" data-act="handClear">모두 지우기</button></div>
     <div class="hpaperwrap"><canvas id="handCv"></canvas></div>`;
@@ -2700,10 +2701,11 @@ function handSync() {
   const v = $('#handView'); if (!v) return;
   v.querySelectorAll('.hcol').forEach(b => b.classList.toggle('on', !HAND.eraser && b.dataset.v === HAND.color));
   v.querySelectorAll('.hw').forEach(b => b.classList.toggle('on', +b.dataset.v === HAND.w));
+  const tk = v.querySelector('#handTk'); if (tk) { tk.classList.toggle('on', HAND.touch); tk.setAttribute('aria-pressed', HAND.touch); }
   const er = v.querySelector('#handEr'); if (er) { er.classList.toggle('on', HAND.eraser); er.setAttribute('aria-pressed', HAND.eraser); }
 }
 const handPt = (ev, cv) => { const r = cv.getBoundingClientRect(); return { x: ev.clientX - r.left, y: ev.clientY - r.top, p: ev.pointerType === 'pen' && ev.pressure > 0 ? ev.pressure : 0.5 }; };
-const handOk = ev => ev.pointerType === 'pen' || ev.pointerType === 'mouse';   // 손가락·손바닥은 무시
+const handOk = ev => ev.pointerType === 'pen' || ev.pointerType === 'mouse' || (HAND.touch && ev.pointerType === 'touch');   // 기본: 손가락·손바닥은 무시. ‘터치펜’을 켜면 정전식 터치펜(터치로 인식)도 씀
 function handSeg(ctx, s, a, b) {
   ctx.globalCompositeOperation = s.eraser ? 'destination-out' : 'source-over';
   ctx.strokeStyle = s.color; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
@@ -2711,17 +2713,17 @@ function handSeg(ctx, s, a, b) {
   ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
 }
 function handDown(ev) {
-  if (!handOk(ev)) return; ev.preventDefault();
+  if (!handOk(ev) || HAND.cur) return; ev.preventDefault(); HAND.pid = ev.pointerId;
   try { HAND.cv.setPointerCapture(ev.pointerId); } catch { }
   const pt = handPt(ev, HAND.cv); HAND.cur = { color: HAND.color, w: HAND.w, eraser: HAND.eraser, pts: [pt] };
   handSeg(HAND.ctx, HAND.cur, pt, { x: pt.x + 0.01, y: pt.y, p: pt.p });
 }
 function handMove(ev) {
-  if (!HAND.cur || !handOk(ev)) return; ev.preventDefault();
+  if (!HAND.cur || !handOk(ev) || ev.pointerId !== HAND.pid) return; ev.preventDefault();
   const evs = ev.getCoalescedEvents ? ev.getCoalescedEvents() : [ev];
   (evs.length ? evs : [ev]).forEach(e2 => { const pt = handPt(e2, HAND.cv), last = HAND.cur.pts[HAND.cur.pts.length - 1]; HAND.cur.pts.push(pt); handSeg(HAND.ctx, HAND.cur, last, pt); });
 }
-function handUp() { if (HAND.cur) { HAND.strokes.push(HAND.cur); HAND.cur = null; } }
+function handUp(ev) { if (ev && HAND.pid != null && ev.pointerId !== HAND.pid) return; if (HAND.cur) { HAND.strokes.push(HAND.cur); HAND.cur = null; } }
 function handRedraw() {
   const c = HAND.ctx; c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, HAND.cv.width, HAND.cv.height); c.restore();
   HAND.strokes.forEach(s => { if (s.pts.length === 1) handSeg(c, s, s.pts[0], { x: s.pts[0].x + 0.01, y: s.pts[0].y, p: s.pts[0].p }); for (let i = 1; i < s.pts.length; i++) handSeg(c, s, s.pts[i - 1], s.pts[i]); });
@@ -2745,6 +2747,7 @@ function handAct(act, v) {
     case 'handDone': return handDone();
     case 'handColor': HAND.color = v; HAND.eraser = false; return handSync();
     case 'handW': HAND.w = +v; return handSync();
+    case 'handTouch': HAND.touch = !HAND.touch; try { localStorage.setItem(HAND_TK, HAND.touch ? '1' : '0'); } catch { } return handSync();
     case 'handEraser': HAND.eraser = !HAND.eraser; return handSync();
     case 'handUndo': HAND.strokes.pop(); return handRedraw();
     case 'handClear': if (HAND.strokes.length) { HAND.strokes = []; handRedraw(); } return;
@@ -5581,7 +5584,7 @@ document.addEventListener('click', async e => {
       h.goalValue = parseFloat(x) > 0 ? Math.round(parseFloat(x) * 10) / 10 : null; await DB.put('habits', h); return renderActive();
     }
     /* 설정 */
-    case 'handOpen': case 'handCancel': case 'handDone': case 'handColor': case 'handW': case 'handEraser': case 'handUndo': case 'handClear': return handAct(act, v);
+    case 'handOpen': case 'handCancel': case 'handDone': case 'handColor': case 'handW': case 'handTouch': case 'handEraser': case 'handUndo': case 'handClear': return handAct(act, v);
     case 'decoPref': P[t.dataset.k] = v; applyPrefs(); renderDecoBox(); return autoGrow();
     case 'dNoBg': return decoToggleNoBg();
     case 'pref': P[t.dataset.k] = v; applyPrefs(); renderTypoBox(); return autoGrow();
