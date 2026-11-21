@@ -536,9 +536,9 @@ body.handOpen{overflow:hidden}
 .decomap .setrow{padding:6px 0}.decomap select{min-height:40px;max-width:55%}
 .dbody[data-bg],.b-entry[data-bg]{--text:#2d2a25;--muted:#6f6a61;--line:#d9d3c7;color:var(--text);-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .dbody[data-bg]{border-radius:6px;min-height:calc(100vh - 64px);box-sizing:border-box}
-[data-bg="ruled"]{background-color:#FBF9F3;background-image:linear-gradient(90deg,transparent 40px,rgba(214,110,110,.38) 40px,rgba(214,110,110,.38) 41.5px,transparent 41.5px),repeating-linear-gradient(to bottom,transparent 0,transparent 31px,rgba(110,150,190,.3) 31px,rgba(110,150,190,.3) 32px)}
+[data-bg="ruled"]{background-color:#FBF9F3;background-image:linear-gradient(90deg,transparent 40px,rgba(214,110,110,.38) 40px,rgba(214,110,110,.38) 41.5px,transparent 41.5px),repeating-linear-gradient(to bottom,transparent 0,transparent 31px,rgba(110,150,190,.22) 31px,rgba(110,150,190,.22) 32px)}
 .dbody[data-bg="ruled"]{padding-left:52px}.b-entry[data-bg="ruled"]{padding-left:11mm}
-[data-bg="dots"]{background-color:#FBFAF6;background-image:radial-gradient(circle,rgba(110,110,110,.32) 1.1px,transparent 1.5px);background-size:22px 22px}
+[data-bg="dots"]{background-color:#FBFAF6;background-image:radial-gradient(circle,rgba(110,110,110,.22) 1px,transparent 1.4px);background-size:22px 22px}
 [data-bg="kraft"]{background-color:#E3D2B3;background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.9%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix values=%220 0 0 0 .4 0 0 0 0 .3 0 0 0 0 .18 0 0 0 .12 0%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E")}
 [data-bg="letter"]{background-color:#FFFCFA;background-image:linear-gradient(#F4D9E0,#F4D9E0),linear-gradient(#F4D9E0,#F4D9E0);background-size:100% 6px,100% 2px;background-position:top,0 calc(100% - 10px);background-repeat:no-repeat;box-shadow:inset 0 0 0 1px #F3E3E7}
 [data-bg="postcard"]{background-color:#F8F3E6;background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2264%22 height=%2276%22 viewBox=%220 0 64 76%22%3E%3Crect x=%221%22 y=%221%22 width=%2262%22 height=%2274%22 rx=%223%22 fill=%22%23FBF3DE%22 stroke=%22%23C4553F%22 stroke-width=%222%22 stroke-dasharray=%223 2.4%22/%3E%3Crect x=%228%22 y=%228%22 width=%2248%22 height=%2260%22 fill=%22%23DCEAF2%22/%3E%3Cellipse cx=%2232%22 cy=%2229%22 rx=%2214%22 ry=%2216%22 fill=%22%23E7704F%22/%3E%3Cpath d=%22M18 29h28%22 stroke=%22%23FBF3DE%22 stroke-width=%222.5%22/%3E%3Cpath d=%22M26 44l3 8M38 44l-3 8%22 stroke=%22%236b5a45%22 stroke-width=%221.3%22/%3E%3Crect x=%2228%22 y=%2252%22 width=%228%22 height=%226%22 rx=%221%22 fill=%22%238a6a45%22/%3E%3Cpath d=%22M8 66q10-7 20-2t28-4v8H8z%22 fill=%22%239CC28A%22/%3E%3C/svg%3E"),repeating-linear-gradient(135deg,#D96B5F 0 10px,#F8F3E6 10px 16px,#5F86C9 16px 26px,#F8F3E6 26px 32px);background-size:46px 55px,100% 6px;background-position:right 14px top 44px,top;background-repeat:no-repeat}
@@ -551,6 +551,24 @@ body.handOpen{overflow:hidden}
 .dbody[data-bg="chalk"]{--text:#EEF1EA;--muted:#C4CCC3;--line:rgba(255,255,255,.28);--accent:#F2D98A;background-color:#2E4038;background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.7%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix values=%220 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E"),radial-gradient(ellipse at 30% 0,rgba(255,255,255,.08),transparent 60%);border:6px solid #98774E;border-radius:8px;box-shadow:inset 0 0 22px rgba(0,0,0,.35)}
 .dbody[data-bg="chalk"] .dtext,.dbody[data-bg="chalk"] .md{color:var(--text)}
 .dbody[data-bg="chalk"] a{color:#F2D98A}
+/* 줄·점 간격 맞춤 + 줄 모양 (2026-11-21): 화면 본문(.dbody)에서만. 간격 --rl = 글자 크기×줄 간격(applyPrefs가 계산). 줄은 글 영역(.dtext/편집칸)에 그려서 글줄과 정확히 맞아요 */
+.dbody[data-bg="ruled"]{background-image:linear-gradient(90deg,transparent 40px,rgba(214,110,110,.34) 40px,rgba(214,110,110,.34) 41.5px,transparent 41.5px)}
+.dbody[data-bg="dots"]{background-image:none}
+.dbody[data-ln] .md,.dbody[data-ln] .dtext,.dbody[data-ln] textarea.dta{line-height:var(--rl,32px)}
+.dbody[data-ln] .dtext{padding:0;margin-top:calc(var(--rl,32px)*.5);min-height:max(120px,calc(100vh - 360px))}
+.dbody[data-ln] textarea.dta{padding:0;margin-top:calc(var(--rl,32px)*.5);background-attachment:local;min-height:calc(var(--rl,32px)*6)}
+.dbody[data-ln] .md p,.dbody[data-ln] .md ul,.dbody[data-ln] .md ol,.dbody[data-ln] .md blockquote{margin:0 0 var(--rl,32px)}
+.dbody[data-ln] .md li,.dbody[data-ln] .md .ck{margin:0}.dbody[data-ln] .md blockquote{padding-top:0;padding-bottom:0}
+.dbody[data-ln] .md h1,.dbody[data-ln] .md h2,.dbody[data-ln] .md h3{line-height:var(--rl,32px);margin:0}
+.dbody[data-ln] .md hr{margin:calc(var(--rl,32px)/2 - .5px) 0}
+.dbody[data-ln] .md>*:last-child{margin-bottom:0}
+.dbody[data-bg="ruled"][data-ln="solid"] .dtext,.dbody[data-bg="ruled"][data-ln="solid"] textarea.dta{background-image:linear-gradient(transparent calc(var(--rl,32px) - 1px),rgba(110,150,190,.22) calc(var(--rl,32px) - 1px));background-size:100% var(--rl,32px)}
+.dbody[data-bg="ruled"][data-ln="wave"] .dtext,.dbody[data-bg="ruled"][data-ln="wave"] textarea.dta{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28' preserveAspectRatio='none'%3E%3Cpath d='M0 26 Q6 23.6 12 26 T24 26' fill='none' stroke='%236E96BE' stroke-opacity='.34' stroke-width='1.5' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");background-size:24px var(--rl,32px)}
+.dbody[data-bg="ruled"][data-ln="dot"] .dtext,.dbody[data-bg="ruled"][data-ln="dot"] textarea.dta{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='28' viewBox='0 0 8 28' preserveAspectRatio='none'%3E%3Cpath d='M1 27H5' fill='none' stroke='%236E96BE' stroke-opacity='.42' stroke-width='1.6' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");background-size:8px var(--rl,32px)}
+.dbody[data-bg="kraft"][data-ln="solid"] .dtext,.dbody[data-bg="kraft"][data-ln="solid"] textarea.dta{background-image:linear-gradient(transparent calc(var(--rl,32px) - 1px),rgba(255,255,255,.7) calc(var(--rl,32px) - 1px));background-size:100% var(--rl,32px)}
+.dbody[data-bg="kraft"][data-ln="wave"] .dtext,.dbody[data-bg="kraft"][data-ln="wave"] textarea.dta{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28' preserveAspectRatio='none'%3E%3Cpath d='M0 26 Q6 23.6 12 26 T24 26' fill='none' stroke='white' stroke-opacity='.75' stroke-width='1.5' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");background-size:24px var(--rl,32px)}
+.dbody[data-bg="kraft"][data-ln="dot"] .dtext,.dbody[data-bg="kraft"][data-ln="dot"] textarea.dta{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='28' viewBox='0 0 8 28' preserveAspectRatio='none'%3E%3Cpath d='M1 27H5' fill='none' stroke='white' stroke-opacity='.85' stroke-width='1.6' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");background-size:8px var(--rl,32px)}
+.dbody[data-bg="dots"][data-ln="grid"] .dtext,.dbody[data-bg="dots"][data-ln="grid"] textarea.dta{background-image:radial-gradient(circle at 50% calc(100% - 1.5px),rgba(110,110,110,.24) 1px,transparent 1.4px);background-size:var(--rl,32px) var(--rl,32px)}
 
 .lrow.habit .rtitle{font-weight:600;font-size:15.5px}
 .thumbs{flex:none;width:76px;height:76px;display:grid;gap:2px;border-radius:7px;overflow:hidden;background:var(--line)}
@@ -841,7 +859,16 @@ input.nbcolor::-moz-color-swatch{border:0;border-radius:50%}
 .field label{font-size:13.5px;color:var(--muted)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .progress{font-size:13.5px;color:var(--muted);margin-top:8px;min-height:18px;white-space:pre-wrap}
-.themegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:10px}
+.tgrp{font-size:12px;color:var(--muted);margin:10px 0 6px}
+.tdots{display:flex;flex-wrap:wrap;gap:10px}
+.tdot{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--tb);display:grid;place-items:center;flex:none;transition:.15s}
+.tdot i{display:block;width:12px;height:12px;border-radius:50%;background:var(--ta)}
+.tdot.on{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--text)}
+.hexrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
+.hexdot{width:22px;height:22px;border-radius:50%;box-shadow:0 0 0 1px var(--line);flex:none}
+input.hexin{width:92px;font-family:ui-monospace,Menlo,monospace;font-size:14px;padding:6px 8px}
+.sw.sm{width:22px;height:22px}
+.themegrid{display:none}
 .tcard{display:flex;flex-direction:column;gap:8px;text-align:left;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--tb);color:var(--tt);transition:.15s}
 .tcard:hover{transform:translateY(-1px)}
 .tcard.on{box-shadow:0 0 0 2px var(--text)}
@@ -1119,10 +1146,8 @@ body.locked #lock{display:flex}
       <h2 class="sec" style="margin-top:10px">설정</h2>
 
       <h2 class="sec setgrp">내 앱 꾸미기</h2>
-      <details class="sect" open><summary>글자 · 화면 · 색</summary><div class="body">
-        <div id="typoBox"></div>
-        <div id="themeBox" style="margin-top:20px"></div>
-      </div></details>
+      <details class="sect" open><summary>글자 · 화면</summary><div class="body"><div id="typoBox"></div></div></details>
+      <details class="sect"><summary>색 테마</summary><div class="body" id="themeBox"></div></details>
       <details class="sect"><summary>일기 꾸미기</summary><div class="body" id="decoBox"></div></details>
       <details class="sect"><summary>주제(노트북) · 글쓰기 틀</summary><div class="body" id="nbManage"></div></details>
       <details class="sect"><summary>태그 관리</summary><div class="body" id="tagManage"></div></details>
@@ -1394,7 +1419,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261121-7';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261121-8';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -1409,6 +1434,7 @@ function applyPrefs() {
   const st = document.documentElement.style;
   st.setProperty('--fs', (FS[P.fs] || 18) + 'px');
   st.setProperty('--lh', LH[P.lh] || 1.85);
+  st.setProperty('--rl', Math.round((FS[P.fs] || 18) * (LH[P.lh] || 1.85)) + 'px');   // 줄노트·점노트 줄 간격(글줄 높이)
   st.setProperty('--w', (WD[P.w] || 720) + 'px');
   st.setProperty('--fam', P.fam === 'serif' ? 'var(--serif)' : 'var(--sans)');
   st.setProperty('--head', P.head === 'sans' ? 'var(--sans)' : 'var(--serif)');
@@ -1424,16 +1450,12 @@ function renderTypoBox() {
   box.innerHTML = `
     <div class="opt"><span>글자 크기</span>${seg('fs', [['sm', '작게'], ['md', '보통'], ['lg', '크게'], ['xl', '아주 크게']])}</div>
     <div class="opt"><span>줄 간격</span>${seg('lh', [['tight', '촘촘'], ['md', '기본'], ['loose', '넓게']])}</div>
-    <div class="opt"><span>본문 글꼴</span>${seg('fam', [['sans', '고딕'], ['serif', '명조']])}</div>
-    <div class="opt"><span>제목 글꼴</span>${seg('head', [['serif', '명조'], ['sans', '고딕']])}</div>
     <div class="opt"><span>본문 폭</span>${seg('w', [['narrow', '좁게'], ['md', '기본'], ['wide', '넓게']])}</div>
-    <div class="opt"><span>종이 느낌</span><label class="check"><input type="checkbox" data-act="prefPaper" ${P.paper ? 'checked' : ''}> 앱 배경에 은은한 종이 결 (어두운 테마에서는 안 보여요)</label></div>
-    <div class="opt"><span>하루 영수증</span><label class="check"><input type="checkbox" data-act="prefReceipt" ${P.receipt ? 'checked' : ''}> 글 맨 아래에 그날을 영수증처럼 요약해서 보이기</label></div>
-    <div class="opt"><span>영수증 PDF</span><label class="check"><input type="checkbox" data-act="prefReceiptPdf" ${P.receiptPdf ? 'checked' : ''}> 일기 PDF·책에도 날짜마다 오른쪽 위에 작게 넣기 (위 '하루 영수증'이 켜져 있어야 해요)</label></div>
+    <div class="opt"><span>종이 느낌</span><label class="check"><input type="checkbox" data-act="prefPaper" ${P.paper ? 'checked' : ''}> 앱 배경에 은은한 종이 결 <small class="muted">(밝은 테마만)</small></label></div>
     <div class="opt"><span>기분 얼굴 버튼</span><label class="check"><input type="checkbox" data-act="prefMoodrow" ${P.moodrow !== false ? 'checked' : ''}> 글쓰기 화면에 기분 고르는 얼굴 버튼 보이기</label></div>
     <div class="opt"><span>글자 진하게</span><label class="check"><input type="checkbox" data-act="prefHc" ${P.hc ? 'checked' : ''}> 보조 글씨·선을 더 또렷하게(고대비)</label></div>
     <div class="sample md"><h2>오늘의 한 줄</h2><p>글자 크기와 줄 간격은 이렇게 보여요. 가독성은 눈이 편한 쪽이 정답이에요.</p><ul><li>말머리 목록 예시</li><li>두 번째 항목</li></ul></div>
-    <p class="small muted" style="margin:8px 0 0">글꼴은 기기에 설치된 기본 글꼴만 사용해요. (인터넷에서 내려받는 글꼴 없음)</p>`;
+`;
 }
 
 const THEMES = [
@@ -1449,7 +1471,10 @@ const THEMES = [
   { id: 'forest', name: '포레스트', bg: '#121a16', tx: '#e4efe4', ac: '#94cca6' },
   { id: 'daybook', name: '데이북', bg: '#2a2741', tx: '#f6f1e7', ac: '#f5a257' }   // 앱 아이콘 색(남색·크림·주황)
 ];
-const ACCENTS = [['#c0563f', '테라코타'], ['#d9730d', '앰버'], ['#b8962e', '머스터드'], ['#5b8a5a', '초록'], ['#2f8f8a', '청록'], ['#3b6ea5', '파랑'], ['#6c58a8', '보라'], ['#c2527a', '핑크'], ['#6b6b6b', '그레이']];
+const ACCENTS = [['#6f8f72', '세이지'], ['#6a88a8', '더스티블루'], ['#8f7aa6', '모브'], ['#b98068', '클레이'], ['#8a8a55', '올리브'], ['#6b7885', '슬레이트'], ['#b9768a', '더스티로즈'], ['#b29a6b', '모래'], ['#c98a3a', '앰버'], ['#4f9a96', '청록']];   // 차분한 톤. 옛 색(테라코타 등)을 고른 기기는 '직접 고른 색'으로 그대로 유지돼요
+const DARK_THEMES = ['dark', 'midnight', 'mocha', 'forest', 'daybook'];
+const accRecent = () => { try { const a = JSON.parse(lsGet('lifeos-accrecent') || '[]'); return Array.isArray(a) ? a.filter(x => /^#[0-9a-f]{6}$/.test(x)).slice(0, 3) : []; } catch { return []; } };
+async function copyText(t) { try { await navigator.clipboard.writeText(t); } catch { const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch { } ta.remove(); } toast('복사했어요 ' + t); }
 const themeById = id => THEMES.find(t => t.id === (id === 'daybooknight' ? 'daybook' : id)) || THEMES[0];   // 'daybooknight'는 시험판에서만 잠깐 쓴 이름
 let accentColor = null;
 const lum = hex => { const n = parseInt(hex.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255].map(c => { c /= 255; return c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; }).reduce((a, c, i) => a + c * [.2126, .7152, .0722][i], 0); };
@@ -1463,6 +1488,7 @@ function applyAccent(hex, silent) {
     if (!silent && contrast(accentColor, ink) < 4.5) toast('이 색은 버튼 글자가 잘 안 보일 수 있어요. 더 진하거나 연한 색을 권해요');
   } else { st.removeProperty('--accent'); st.removeProperty('--accent-ink'); }
   lsSet('lifeos-accent', accentColor || '');
+  if (accentColor && !silent && !ACCENTS.some(a => a[0] === accentColor)) lsSet('lifeos-accrecent', JSON.stringify([accentColor, ...accRecent().filter(x => x !== accentColor)].slice(0, 3)));
   renderThemeBox();
 }
 function applyTheme(id) {
@@ -1480,14 +1506,24 @@ function cycleTheme() {
 }
 function renderThemeBox() {
   const box = $('#themeBox'); if (!box) return;
-  const cur = document.documentElement.dataset.theme;
-  box.innerHTML = `<div class="lab" style="margin-bottom:10px;font-weight:700">색 테마 <span class="muted small" style="font-weight:400">· 상단 버튼을 누르면 차례로 바뀌어요</span></div>
-    <div class="themegrid">${THEMES.map(t => `<button class="tcard ${t.id === cur ? 'on' : ''}" data-act="setTheme" data-v="${t.id}" style="--tb:${t.bg};--tt:${t.tx};--ta:${t.ac}"><div class="tbars"><i></i><i></i><b></b></div><span class="tn">${t.name}</span></button>`).join('')}</div>
-    <div class="lab" style="margin:18px 0 10px;font-weight:700">포인트 색 <span class="muted small" style="font-weight:400">· 버튼·선택 표시에 쓰이는 색</span></div>
+  const cur = document.documentElement.dataset.theme, tc = themeById(cur), dot = t => `<button class="tdot ${t.id === cur ? 'on' : ''}" data-act="setTheme" data-v="${t.id}" style="--tb:${t.bg};--ta:${t.ac}" title="${t.name}" aria-label="${t.name}"><i></i></button>`;
+  const pal = ACCENTS.find(a => a[0] === accentColor), shown = accentColor || tc.ac, rec = accRecent();
+  box.innerHTML = `<div class="lab" style="margin-bottom:6px;font-weight:700">테마 <span class="muted small" style="font-weight:400">· ${tc.name}</span></div>
+    <div class="tgrp">밝은</div><div class="tdots">${THEMES.filter(t => !DARK_THEMES.includes(t.id)).map(dot).join('')}</div>
+    <div class="tgrp">어두운</div><div class="tdots">${THEMES.filter(t => DARK_THEMES.includes(t.id)).map(dot).join('')}</div>
+    <div class="lab" style="margin:18px 0 10px;font-weight:700">포인트 색 <span class="muted small" style="font-weight:400">· ${!accentColor ? '테마 기본' : pal ? pal[1] : '직접 고른 색'}</span></div>
     <div class="accs"><button class="sw def ${accentColor ? '' : 'on'}" data-act="setAccent" data-v="" title="테마 기본색" aria-label="기본"></button>
       ${ACCENTS.map(([c, n]) => `<button class="sw ${accentColor === c ? 'on' : ''}" style="--c:${c}" data-act="setAccent" data-v="${c}" title="${n}" aria-label="${n}"></button>`).join('')}
-      <input class="swpick" type="color" id="accPick" value="${accentColor || themeById(cur).ac}" title="직접 고르기"></div>`;
+      <input class="swpick" type="color" id="accPick" value="${shown}" title="직접 고르기"></div>
+    <div class="hexrow"><span class="hexdot" style="background:${shown}"></span><input id="accHex" class="hexin" value="${shown}" maxlength="7" spellcheck="false" autocapitalize="off" aria-label="색 코드"><button class="btn ghost sm" data-act="copyAcc">복사</button>
+      ${rec.length ? `<span class="muted small" style="margin-left:6px">최근</span>${rec.map(c => `<button class="sw sm ${accentColor === c ? 'on' : ''}" style="--c:${c}" data-act="setAccent" data-v="${c}" title="${c}" aria-label="${c}"></button>`).join('')}` : ''}</div>`;
   const pk = $('#accPick'); if (pk) pk.addEventListener('change', e => applyAccent(e.target.value));
+  const hx = $('#accHex'); if (hx) hx.addEventListener('change', e => {
+    let v = e.target.value.trim().toLowerCase(); if (v[0] !== '#') v = '#' + v;
+    if (/^#[0-9a-f]{3}$/.test(v)) v = '#' + [...v.slice(1)].map(c => c + c).join('');
+    if (!/^#[0-9a-f]{6}$/.test(v)) { toast('색 코드는 #c98a3a 처럼 써 주세요'); e.target.value = shown; return; }
+    applyAccent(v);
+  });
 }
 
 /* ==========================================================
@@ -2627,7 +2663,9 @@ function decoDefaultBg(nb) {
 const decoBgOf = nb => { const m = P.dbgMap && P.dbgMap[nb]; return m || decoDefaultBg(nb); };
 /* 글 하나에 적용할 배경 키 (꺼져 있거나 글에서 껐거나 '없음'이면 '') */
 function decoEntryBg(e) { if (!P.dbg || !e || e.noBg) return ''; const k = decoBgOf(e.notebook); return k && k !== 'none' ? k : ''; }
-const decoBgAttr = e => { const k = decoEntryBg(e); return k ? ` data-bg="${k}"` : ''; };
+/* 줄 모양(P.dln): ''=기본(줄노트 직선·크래프트 없음) / solid 직선 / wave 물결 / dot 점선. 점노트는 점 간격만 글줄에 맞춰요 */
+const decoLnOf = k => k === 'ruled' ? (P.dln || 'solid') : k === 'kraft' ? (P.dln || '') : k === 'dots' ? 'grid' : '';
+const decoBgAttr = e => { const k = decoEntryBg(e); if (!k) return ''; const ln = decoLnOf(k); return ` data-bg="${k}"${ln ? ` data-ln="${ln}"` : ''}`; };
 
 /* 글꼴: 앱 안의 글꼴 데이터(<script id="fontData">)를 고른 때에만 읽어요 */
 const DECO_LOADED = {};
@@ -2651,12 +2689,17 @@ function applyDeco() {
 const decoBgOpts = sel => DECO_BGS.map(([v, l]) => `<option value="${v}" ${v === sel ? 'selected' : ''}>${l}</option>`).join('');
 function renderDecoBox() {
   const box = $('#decoBox'); if (!box) return;
+  const seg = (k, opts) => `<div class="seg">${opts.map(([v, l]) => `<button class="${P[k] === v ? 'on' : ''}" data-act="pref" data-k="${k}" data-v="${v}">${l}</button>`).join('')}</div>`;
   const chips = (k, opts) => `<div class="seg wrap">${opts.map(([v, l]) => `<button class="${(P[k] || '') === v ? 'on' : ''}" data-act="decoPref" data-k="${k}" data-v="${v}">${l}</button>`).join('')}</div>`;
   box.innerHTML = `
-    <div class="opt"><span>글꼴</span>${chips('dfont', DECO_FONTS)}</div>
+    <div class="opt"><span>본문 글꼴</span>${seg('fam', [['sans', '고딕'], ['serif', '명조']])}</div>
+    <div class="opt"><span>제목 글꼴</span>${seg('head', [['serif', '명조'], ['sans', '고딕']])}</div>
+    <div class="opt"><span>손글씨체</span>${chips('dfont', DECO_FONTS)}</div>
     <div class="opt"><span>글자 간격</span>${chips('dls', [['narrow', '좁게'], ['md', '보통'], ['wide', '넓게']])}</div>
+    <div class="opt"><span>하루 영수증</span><label class="check"><input type="checkbox" data-act="prefReceipt" ${P.receipt ? 'checked' : ''}> 글 맨 아래에 그날을 영수증처럼 요약해서 보이기</label></div>
+    ${P.receipt ? `<div class="opt"><span>영수증 PDF</span><label class="check"><input type="checkbox" data-act="prefReceiptPdf" ${P.receiptPdf ? 'checked' : ''}> 일기 PDF·책에도 날짜마다 오른쪽 위에 작게 넣기</label></div>` : ''}
     <div class="opt"><span>주제별 배경</span><label class="check"><input type="checkbox" data-act="decoBgOn" ${P.dbg ? 'checked' : ''}> 글을 열었을 때 주제에 맞는 배경 보이기</label></div>
-    ${P.dbg ? `<div class="decomap">${S.notebooks.map(n => `<div class="setrow"><div class="lab">${esc(n)}</div><select data-act="decoBgSel" data-nb="${esc(n)}">${decoBgOpts(decoBgOf(n))}</select></div>`).join('')}</div>
+    ${P.dbg ? `<div class="opt"><span>줄 모양</span>${chips('dln', [['', '기본'], ['solid', '직선'], ['wave', '물결'], ['dot', '점선']])}</div><div class="decomap">${S.notebooks.map(n => `<div class="setrow"><div class="lab">${esc(n)}</div><select data-act="decoBgSel" data-nb="${esc(n)}">${decoBgOpts(decoBgOf(n))}</select></div>`).join('')}</div>
     <div class="opt"><span>PDF</span><label class="check"><input type="checkbox" data-act="decoPdf" ${P.dbgPdf ? 'checked' : ''}> PDF에도 배경 넣기 (칠판은 흰 종이로 바꿔서 인쇄해요)</label></div>` : ''}
     <div class="sample md"><h2>오늘의 한 줄</h2><p>고른 글꼴과 글자 간격은 이렇게 보여요. 가나다라마바사 ABC 123</p></div>
     <p class="small muted" style="margin:8px 0 0">글꼴은 앱 안에 들어 있어서 인터넷이 필요 없어요. 흔치 않은 글자는 기본 글꼴로 보여요. 글마다 ⋯ 메뉴에서 그 글만 배경을 끌 수 있어요. 이 설정은 이 기기에만 적용돼요.</p>`;
@@ -5615,10 +5658,11 @@ document.addEventListener('click', async e => {
     case 'handOpen': case 'handCancel': case 'handDone': case 'handColor': case 'handW': case 'handTouch': case 'handEraser': case 'handUndo': case 'handClear': return handAct(act, v);
     case 'decoPref': P[t.dataset.k] = v; applyPrefs(); renderDecoBox(); return autoGrow();
     case 'dNoBg': return decoToggleNoBg();
-    case 'pref': P[t.dataset.k] = v; applyPrefs(); renderTypoBox(); return autoGrow();
+    case 'pref': P[t.dataset.k] = v; applyPrefs(); renderTypoBox(); renderDecoBox(); return autoGrow();
     case 'prefHc': P.hc = t.checked; applyPrefs(); return;
     case 'setTheme': return applyTheme(v);
-    case 'setAccent': return applyAccent(v || null);
+    case 'setAccent': return applyAccent(v || null, ACCENTS.some(a => a[0] === v));
+    case 'copyAcc': return copyText(accentColor || themeById(document.documentElement.dataset.theme).ac);
     case 'nbAdd': { await addNotebook(); renderSettings(); return renderComposer(); }
     case 'nbStyle': return pickNbStyle(v);
     case 'nbUp': return moveNb(v, -1);
@@ -5680,7 +5724,7 @@ document.addEventListener('change', async e => {
   if (t.dataset && t.dataset.act === 'decoBgOn') { P.dbg = t.checked; applyPrefs(); renderDecoBox(); if (DT.id) renderDetail(true); return; }
   if (t.dataset && t.dataset.act === 'decoPdf') { P.dbgPdf = t.checked; applyPrefs(); return; }
   if (t.dataset && t.dataset.act === 'decoBgSel') { P.dbgMap = P.dbgMap || {}; P.dbgMap[t.dataset.nb] = t.value; applyPrefs(); return; }
-  if (t.dataset && t.dataset.act === 'prefReceipt') { P.receipt = t.checked; applyPrefs(); return; }
+  if (t.dataset && t.dataset.act === 'prefReceipt') { P.receipt = t.checked; applyPrefs(); renderDecoBox(); return; }
   if (t.dataset && t.dataset.act === 'prefReceiptPdf') { P.receiptPdf = t.checked; applyPrefs(); return; }
   if (t.dataset && t.dataset.act === 'prefPaper') { P.paper = t.checked; applyPrefs(); return; }
   if (t.dataset && t.dataset.act === 'prefNbFreq') { P.nbFreq = t.checked; applyPrefs(); renderNbManage(); renderActive(); renderComposer(); return; }
