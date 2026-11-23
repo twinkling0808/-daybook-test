@@ -246,6 +246,7 @@ textarea.diary:focus{border:0}
 .tagedit{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0 8px}
 .tagedit input{flex:1;min-width:130px;border:0;border-bottom:1px solid var(--line);background:none;font-size:15px;padding:6px 2px;color:var(--text);outline:none}
 .tagedit .tagsug{width:100%}
+.tagrec{font-size:14px;color:var(--link);padding:6px 4px}
 .tagsug button{font-size:13.5px;color:var(--muted);border:1px dashed var(--line);border-radius:999px;padding:2px 10px}
 .tagsug button:hover{color:var(--link);border-color:var(--link)}
 
@@ -1423,7 +1424,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261123-3';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261123-4';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -2480,14 +2481,53 @@ function addDraftTag(t) {
   const n = $('#tagIn'); if (n) n.value = '';   // 추가하면 입력칸을 비워서 추천 목록이 전체로 보이게
   renderTagEdit();
 }
+/* 내용으로 태그 추천 (AI 없음, 2026-11-23): ① 키워드 사전 ② 내 기록 — 같은 태그가 붙은 글 2개 이상에 나온 단어가 이번 글에 있으면 점수 */
+const TAG_KW = {
+  '골프': ['골프', '라운드', '드라이버', '퍼팅', '스윙', '캐디', '필드', '스코어', '연습장', '버디'],
+  '식단': ['식단', '점심', '저녁', '아침', '샐러드', '칼로리', 'kcal', '끼니', '간식', '메뉴'],
+  '운동': ['운동', '헬스', '홈트', '걷기', '러닝', '스트레칭', '요가', '산책', '근력'],
+  '병원': ['병원', '진료', '약국', '검진', '처방', '의원', '치료'],
+  '여행': ['여행', '호텔', '항공', '공항', '숙소', '관광', '비행기'],
+  '수업': ['수업', '강의', '학생', '강의실', '과제', '시험', '교안'],
+  '영화': ['영화', '드라마', '시사회', '상영', '관람'],
+  '업무': ['회의', '보고', '행사', '학회', '센터', '결재', '출장'],
+  '독서': ['독서', '책', '서평'],
+};
+const TAG_STOP = new Set(['그리고', '오늘', '정말', '너무', '했어요', '했다', '있는', '하는', '하고', '에서', '으로', '이고', '그냥', '우리', '나는', '많이', '조금', '좀', '것이', '이다', '입니다', '해요', '있어요', '했어', '오늘은', '어제', '그래서', '그런데', '하지만', '이랑', '에게', '부터', '까지']);
+const TAG_REC = { list: [] };
+const tagWords = s => [...new Set(String(s || '').toLowerCase().split(/[^0-9a-z가-힣]+/).filter(w => w.length >= 2 && !TAG_STOP.has(w)))];
+function tagRecommend(text) {
+  const low = String(text || '').toLowerCase(), words = new Set(tagWords(text));
+  if (!low.trim()) return [];
+  const score = new Map(), add = (t, n) => score.set(t, (score.get(t) || 0) + n);
+  Object.entries(TAG_KW).forEach(([tag, kws]) => { if (low.includes(tag.toLowerCase()) || kws.some(k => low.includes(k))) add(tag, 3); });
+  const by = new Map(), skip = new Set(['주간통계', ...HL_DIARY_TAGS]);
+  S.entries.forEach(e => {
+    if (!e.text || !(e.tags || []).length) return;
+    const ws = tagWords(e.text);
+    (e.tags || []).forEach(t => {
+      if (skip.has(t)) return;
+      const k = tagKey(t), m = by.get(k) || { name: t, cnt: new Map() };
+      ws.forEach(w => m.cnt.set(w, (m.cnt.get(w) || 0) + 1)); by.set(k, m);
+    });
+  });
+  by.forEach(m => { let n = 0; words.forEach(w => { if ((m.cnt.get(w) || 0) >= 2) n++; }); if (n) add(m.name, n); });
+  return [...score.entries()].filter(([t]) => !D.tags.some(x => tagKey(x) === tagKey(t))).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) => t);
+}
+function tagRecNow() {
+  const text = ($('#text') || {}).value || '';
+  TAG_REC.list = tagRecommend(text);
+  if (!TAG_REC.list.length) toast('맞는 태그를 찾지 못했어요. 글을 조금 더 쓰거나 직접 넣어 주세요', 3000);
+  renderTagEdit();
+}
 function renderTagEdit() {
   if (!$('#tagEdit')) return;
   const box = $('#tagEdit'), old = $('#tagIn'), val = old ? old.value : '', had = old && document.activeElement === old;
-  const q = tagKey(cleanTag(val));
-  const sugs = tagCounts().filter(o => !D.tags.some(x => tagKey(x) === tagKey(o.name)) && (!q || tagKey(o.name).startsWith(q))).slice(0, 8);
+  const recs = TAG_REC.list.filter(t => !D.tags.some(x => tagKey(x) === tagKey(t)));
   box.innerHTML = D.tags.map(t => `<span class="tagchip">#${esc(t)}<button data-act="rmTag" data-v="${esc(t)}" aria-label="태그 삭제">✕</button></span>`).join('')
     + `<input id="tagIn" type="text" placeholder="# 태그 추가 · Enter" value="${esc(val)}" autocomplete="off" autocapitalize="off" enterkeyhint="done">`
-    + (sugs.length ? `<div class="tagsug" style="width:100%">${sugs.map(o => `<button data-act="addTag" data-v="${esc(o.name)}">#${esc(o.name)}</button>`).join('')}</div>` : '');
+    + `<button type="button" class="link tagrec" data-act="tagRec">✦ 내용으로 추천</button>`
+    + (recs.length ? `<div class="tagsug" style="width:100%">${recs.map(t => `<button data-act="addTag" data-v="${esc(t)}">#${esc(t)}</button>`).join('')}</div>` : '');
   if (had) { const n = $('#tagIn'); n.focus(); n.setSelectionRange(val.length, val.length); }
 }
 const MEALS = ['아침', '점심', '저녁', '간식', '음료'];
@@ -2531,7 +2571,7 @@ function renderMoodRow() {
 }
 function resetComposer() {
   if (D.editId && Lbak) { L = Lbak; Lbak = null; }
-  Object.assign(D, { editId: null, dayEdit: false, mood: null, photos: [], files: [], tags: [], meal: null, fav: false }); moodOpen = false;
+  Object.assign(D, { editId: null, dayEdit: false, mood: null, photos: [], files: [], tags: [], meal: null, fav: false }); moodOpen = false; TAG_REC.list = [];
   $('#text').value = ''; lsSet('lifeos-draft', ''); lsSet('lifeos-draft-meal', ''); DB.del('meta', 'draftfiles').catch(() => {});
   const n = new Date(); $('#dDate').value = ymd(n); $('#dTime').value = hm(n);
   if ($('#composer').classList.contains('zen')) toggleZen();
@@ -5535,6 +5575,7 @@ document.addEventListener('click', async e => {
     case 'keepText': L.place = $('#locInput').value.trim(); $('#locResults').hidden = true; saveLastLoc(); return;
     case 'rmTag': D.tags = D.tags.filter(x => x !== v); return renderTagEdit();
     case 'addTag': return addDraftTag(v);
+    case 'tagRec': return tagRecNow();
     case 'foodAdd': return foodAdd(t.dataset.n, t.dataset.u);
     case 'foodCustom': return foodCustom(t.dataset.n);
     case 'foodRm': D.meal.items.splice(+t.dataset.i, 1); applyMealTotals(); if (!D.meal.items.length) D.meal.kcal = ''; return renderMealRow();
