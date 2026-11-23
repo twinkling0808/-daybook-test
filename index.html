@@ -1071,7 +1071,6 @@ body.locked #lock{display:flex}
 
         <div class="moodrow" id="moodRow" hidden></div>
         <div class="mealrow" id="mealRow" hidden></div>
-        <div class="tagedit" id="tagEdit"></div>
 
         <div class="fmtbar" id="fmtbar" role="toolbar" aria-label="글 서식">
           <button data-fmt="h1">제목</button>
@@ -1092,6 +1091,7 @@ body.locked #lock{display:flex}
         <textarea id="text" class="diary" rows="8" placeholder="오늘은 어땠나요?"></textarea>
 
         <div class="photoprev" id="photoPrev"></div>
+        <div class="tagedit" id="tagEdit"></div>
 
         <div class="composer-actions">
           <label class="btn ghost" style="cursor:pointer">사진·영상<input id="photoInput" type="file" accept="image/*,video/*" multiple hidden></label>
@@ -1424,7 +1424,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261123-5';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261123-6';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
