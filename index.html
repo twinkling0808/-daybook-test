@@ -1424,7 +1424,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261123-6';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261123-7';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -2496,7 +2496,7 @@ const TAG_KW = {
 const TAG_STOP = new Set(['그리고', '오늘', '정말', '너무', '했어요', '했다', '있는', '하는', '하고', '에서', '으로', '이고', '그냥', '우리', '나는', '많이', '조금', '좀', '것이', '이다', '입니다', '해요', '있어요', '했어', '오늘은', '어제', '그래서', '그런데', '하지만', '이랑', '에게', '부터', '까지']);
 const TAG_REC = { list: [] };
 const tagWords = s => [...new Set(String(s || '').toLowerCase().split(/[^0-9a-z가-힣]+/).filter(w => w.length >= 2 && !TAG_STOP.has(w)))];
-function tagRecommend(text) {
+function tagRecommend(text, have = D.tags) {
   const low = String(text || '').toLowerCase(), words = new Set(tagWords(text));
   if (!low.trim()) return [];
   const score = new Map(), add = (t, n) => score.set(t, (score.get(t) || 0) + n);
@@ -2512,7 +2512,7 @@ function tagRecommend(text) {
     });
   });
   by.forEach(m => { let n = 0; words.forEach(w => { if ((m.cnt.get(w) || 0) >= 2) n++; }); if (n) add(m.name, n); });
-  return [...score.entries()].filter(([t]) => !D.tags.some(x => tagKey(x) === tagKey(t))).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) => t);
+  return [...score.entries()].filter(([t]) => !have.some(x => tagKey(x) === tagKey(t))).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) => t);
 }
 function tagRecNow() {
   const text = ($('#text') || {}).value || '';
@@ -3027,7 +3027,7 @@ function renderDFoodSug() {
 }
 function detailTagsHtml(e) {
   const tags = e.tags || [];
-  return `<div class="dtags">${tags.map(t => `<span class="tagchip"><button class="tg" data-act="tagFilter" data-v="${esc(t)}">#${esc(t)}</button><button data-act="dRmTag" data-v="${esc(t)}" aria-label="태그 삭제">✕</button></span>`).join('')}<input id="dTagIn" type="text" placeholder="# 태그 추가" value="${esc(DT.tagQ || '')}" autocomplete="off" autocapitalize="off" enterkeyhint="done"></div><div class="tagsug" id="dSug"></div>`;
+  return `<div class="dtags">${tags.map(t => `<span class="tagchip"><button class="tg" data-act="tagFilter" data-v="${esc(t)}">#${esc(t)}</button><button data-act="dRmTag" data-v="${esc(t)}" aria-label="태그 삭제">✕</button></span>`).join('')}<input id="dTagIn" type="text" placeholder="# 태그 추가" value="${esc(DT.tagQ || '')}" autocomplete="off" autocapitalize="off" enterkeyhint="done"></div><button type="button" class="link tagrec" data-act="dTagRec">✦ 내용으로 추천</button>${(DT.tagRec || []).length ? `<div class="tagsug">${DT.tagRec.map(t => `<button data-act="dAddTag" data-v="${esc(t)}">#${esc(t)}</button>`).join('')}</div>` : ''}<div class="tagsug" id="dSug"></div>`;
 }
 function updateTagSugs() {
   const el = $('#dSug'), e = S.entries.find(x => x.id === DT.id); if (!el || !e) return;
@@ -5626,7 +5626,14 @@ document.addEventListener('click', async e => {
     case 'otdToday': otdOff = 0; return renderOtd();
     case 'dMoodToggle': DT.moodOpen = !DT.moodOpen; return renderDetail(true);
     case 'dRmTag': return patchDetail(x => { x.tags = (x.tags || []).filter(t => t !== v); });
-    case 'dAddTag': return dAddTag(v);
+    case 'dAddTag': { DT.tagRec = (DT.tagRec || []).filter(t => t !== v); return dAddTag(v); }
+    case 'dTagRec': {
+      const e = S.entries.find(x => x.id === DT.id); if (!e) return;
+      const text = DT.editing && $('#dText') ? $('#dText').value : (e.text || '');
+      DT.tagRec = tagRecommend(text, e.tags || []);
+      if (!DT.tagRec.length) toast('맞는 태그를 찾지 못했어요. 글을 조금 더 쓰거나 직접 넣어 주세요', 3000);
+      return renderDetail(true);
+    }
     case 'dMeta': return editEntryMeta();
     case 'dPhotos': { await flushSave(); return startEdit(DT.id); }
     case 'closeDetail': return closeDetail();
