@@ -552,9 +552,14 @@ body.handOpen{overflow:hidden}
 .dbody[data-bg="grass"]{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
 [data-bg="film"]{background-color:#FBF8F0;background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2222%22 height=%2228%22%3E%3Crect width=%2222%22 height=%2228%22 fill=%22%23DDD6C7%22/%3E%3Crect x=%226%22 y=%228%22 width=%2210%22 height=%2212%22 rx=%222.4%22 fill=%22%23FBF8F0%22/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2222%22 height=%2228%22%3E%3Crect width=%2222%22 height=%2228%22 fill=%22%23DDD6C7%22/%3E%3Crect x=%226%22 y=%228%22 width=%2210%22 height=%2212%22 rx=%222.4%22 fill=%22%23FBF8F0%22/%3E%3C/svg%3E");background-size:22px 28px,22px 28px;background-position:left top,right top;background-repeat:repeat-y,repeat-y}
 .dbody[data-bg="film"]{padding-left:36px;padding-right:36px}.b-entry[data-bg="film"]{padding:0 9mm}
-.dbody[data-bg="chalk"]{--text:#EEF1EA;--muted:#C4CCC3;--line:rgba(255,255,255,.28);--accent:#F2D98A;background-color:#2E4038;background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.7%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix values=%220 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E"),radial-gradient(ellipse at 30% 0,rgba(255,255,255,.08),transparent 60%);border:6px solid #98774E;border-radius:8px;box-shadow:inset 0 0 22px rgba(0,0,0,.35)}
+/* 종이 계열 배경(줄노트·점노트·크래프트·편지지·엽서·능선·잔디·필름): 어두운 테마에서도 글씨·태그가 보이도록 글자색을 고정(2026-11-23) */
+.dbody[data-bg="ruled"],.dbody[data-bg="dots"],.dbody[data-bg="kraft"],.dbody[data-bg="letter"],.dbody[data-bg="postcard"],.dbody[data-bg="ridge"],.dbody[data-bg="grass"],.dbody[data-bg="film"]{--text:#2E2A26;--muted:#6E675F;--link:#2D5C7E;--line:rgba(60,50,40,.2)}
+.dbody[data-bg="chalk"]{--text:#EEF1EA;--muted:#C4CCC3;--line:rgba(255,255,255,.28);--accent:#F2D98A;--link:#F2D98A;background-color:#2E4038;background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.7%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix values=%220 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E"),radial-gradient(ellipse at 30% 0,rgba(255,255,255,.08),transparent 60%);border:6px solid #98774E;border-radius:8px;box-shadow:inset 0 0 22px rgba(0,0,0,.35)}
 .dbody[data-bg="chalk"] .dtext,.dbody[data-bg="chalk"] .md{color:var(--text)}
 .dbody[data-bg="chalk"] a{color:#F2D98A}
+/* 밝은 칠판(수업 글용, 2026-11-23): 연한 칠판에 나무 테두리 한 줄 */
+.dbody[data-bg="classlite"]{--text:#2F3B35;--muted:#5E6B63;--line:rgba(47,59,53,.22);--accent:#3E7A5E;--link:#2F6B52;background-color:#E9F1EA;background-image:linear-gradient(#B98F5E,#B98F5E);background-size:100% 8px;background-repeat:no-repeat;background-position:top;padding-top:22px}
+.dbody[data-bg="classlite"] .dtext,.dbody[data-bg="classlite"] .md{color:var(--text)}
 /* 줄·점 간격 맞춤 + 줄 모양 (2026-11-21): 화면 본문(.dbody)에서만. 간격 --rl = 글자 크기×줄 간격(applyPrefs가 계산). 줄은 글 영역(.dtext/편집칸)에 그려서 글줄과 정확히 맞아요 */
 .dbody[data-bg="ruled"]{background-image:linear-gradient(90deg,transparent 40px,rgba(214,110,110,.34) 40px,rgba(214,110,110,.34) 41.5px,transparent 41.5px)}
 .dbody[data-bg="dots"]{background-image:none}
@@ -1424,7 +1429,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261123-7';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261123-8';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -2694,7 +2699,7 @@ function updateHeaderSub() { const n = writeStreak(); $('#todayLabel').textConte
    ========================================================== */
 const DECO_FONTS = [['', '기본'], ['nanumpen', '나눔손글씨 펜'], ['gamja', '감자꽃'], ['himelody', '하이멜로디'], ['yeonsung', '연성']];
 const DECO_LS = { narrow: '-0.05em', wide: '0.07em' };
-const DECO_BGS = [['none', '없음'], ['ruled', '줄노트'], ['dots', '점노트'], ['kraft', '크래프트'], ['letter', '편지지'], ['postcard', '엽서'], ['ridge', '능선'], ['chalk', '칠판'], ['film', '필름'], ['grass', '잔디']];
+const DECO_BGS = [['none', '없음'], ['ruled', '줄노트'], ['dots', '점노트'], ['kraft', '크래프트'], ['letter', '편지지'], ['postcard', '엽서'], ['ridge', '능선'], ['chalk', '칠판'], ['classlite', '밝은 칠판'], ['film', '필름'], ['grass', '잔디']];
 /* 주제 이름으로 처음 정해 두는 배경(설정에서 주제마다 바꿀 수 있어요) */
 function decoDefaultBg(nb) {
   const n = String(nb || '').toLowerCase();
