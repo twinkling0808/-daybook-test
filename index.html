@@ -1424,7 +1424,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261123-4';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261123-5';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -2523,7 +2523,8 @@ function tagRecNow() {
 function renderTagEdit() {
   if (!$('#tagEdit')) return;
   const box = $('#tagEdit'), old = $('#tagIn'), val = old ? old.value : '', had = old && document.activeElement === old;
-  const recs = TAG_REC.list.filter(t => !D.tags.some(x => tagKey(x) === tagKey(t)));
+  const q = tagKey(cleanTag(val));
+  const recs = q ? tagCounts().filter(o => !D.tags.some(x => tagKey(x) === tagKey(o.name)) && tagKey(o.name).startsWith(q)).slice(0, 5).map(o => o.name) : TAG_REC.list.filter(t => !D.tags.some(x => tagKey(x) === tagKey(t)));
   box.innerHTML = D.tags.map(t => `<span class="tagchip">#${esc(t)}<button data-act="rmTag" data-v="${esc(t)}" aria-label="태그 삭제">✕</button></span>`).join('')
     + `<input id="tagIn" type="text" placeholder="# 태그 추가 · Enter" value="${esc(val)}" autocomplete="off" autocapitalize="off" enterkeyhint="done">`
     + `<button type="button" class="link tagrec" data-act="tagRec">✦ 내용으로 추천</button>`
@@ -3031,7 +3032,7 @@ function detailTagsHtml(e) {
 function updateTagSugs() {
   const el = $('#dSug'), e = S.entries.find(x => x.id === DT.id); if (!el || !e) return;
   const q = tagKey(cleanTag(DT.tagQ || '')), cur = new Set((e.tags || []).map(tagKey));
-  const sugs = DT.tagFocus ? tagCounts().filter(o => !cur.has(tagKey(o.name)) && (!q || tagKey(o.name).startsWith(q))).slice(0, 8) : [];
+  const sugs = DT.tagFocus && q ? tagCounts().filter(o => !cur.has(tagKey(o.name)) && (!q || tagKey(o.name).startsWith(q))).slice(0, 8) : [];
   el.innerHTML = sugs.map(o => `<button data-act="dAddTag" data-v="${esc(o.name)}">#${esc(o.name)}</button>`).join('');
 }
 function renderDetail(force) {
