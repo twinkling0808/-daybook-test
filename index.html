@@ -1419,7 +1419,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261123-1';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261123-2';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -7022,6 +7022,13 @@ function wkBriefHtml(e) {
     <div class="row hlacts"><button class="link" data-act="wkAi" data-v="${esc(e.id)}">다시 받기</button><button class="link" data-act="wkAiDel" data-v="${esc(e.id)}" style="color:var(--danger,#c0392b)">지우기</button></div>
     <div class="small muted" style="margin-top:6px">참고용 · 의학적 조언이 아니에요${b.est ? ' · AI 어림 열량 포함' : ''}</div></div>`;
 }
+/* 주간 AI 브리핑 모델: 4 하이드로젠 고정(2026-11-23). 서버가 바쁘면(503·504·시간 초과) 평일 모델로 한 번만 다시 받아요. */
+const WK_AI_MODEL = 'gemini-4-hydrogen', WK_AI_FALLBACK = 'gemini-3.5-flash-lite';
+async function wkAiCall(prompt) {
+  const parts = [{ text: prompt }], o = { temp: 0.9 };
+  try { return await geminiCall(parts, true, WK_AI_MODEL, o); }
+  catch (err) { if ([503, 504, 'timeout'].includes(err && err.code)) return geminiCall(parts, true, WK_AI_FALLBACK, o); throw err; }
+}
 async function wkAiBrief(id) {
   const e = S.entries.find(x => x.id === id); if (!e || !wkIsHealth(e)) return;
   if (WK_AI.busy || HL.busy) return;
@@ -7033,7 +7040,7 @@ async function wkAiBrief(id) {
     const data = hlBriefData(date);
     data._corner = HL_CORNERS[0]; data.일요일_주간분석 = true;   // 한 주 돌아보기 형식으로 고정
     const voice = hlPick(HL_VOICES, []);
-    const txt = await geminiCall([{ text: hlBriefPrompt(data, date, voice, '') }], true, undefined, { temp: 0.9 });
+    const txt = await wkAiCall(hlBriefPrompt(data, date, voice, ''));
     let js; try { js = JSON.parse(String(txt).trim().replace(/^```(?:json)?/i, '').replace(/```$/, '').trim()); } catch { throw { code: 'parse' }; }
     const arr = (x, n = 200, k = 6) => (Array.isArray(x) ? x : x ? [x] : []).map(z => String(z).slice(0, n)).slice(0, k);
     const summary = arr(js && js.summary).slice(0, 3); if (!summary.length) throw { code: 'parse' };
