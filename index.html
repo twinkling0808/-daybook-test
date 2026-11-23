@@ -1419,7 +1419,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261121-10';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261123-1';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -3005,6 +3005,7 @@ function renderDetail(force) {
       ${dMoodHtml(e)}
       ${detailTagsHtml(e)}
       ${rcDayFold(e)}
+      ${e.weeklyStat ? wkBriefHtml(e) : ''}
       <div class="eactions"><button data-act="dPhotos">🖼 사진·파일 추가/편집</button>${e.updatedAt ? '<span class="edited">· 수정됨</span>' : ''}</div>`;
   }
   const right = DT.editing ? '<button class="btn sm primary" data-act="dDone">완료</button>'
@@ -4248,7 +4249,8 @@ async function makeWeekPost(mon, nb) {
   const ts = Math.min(end.getTime(), now), body = hs.map(h => habitWeekLine(h, mon)).join('\n\n');
   const text = `## ${nb} 주간 통계 · ${wkRange(mon)}\n\n${body}\n\n✓ 함 · ✕ 못 함 · – 쉬는 날 · · 아직/해당 없음`;
   const e = { ...(old || {}), id, type: 'log', notebook: nb, mood: normMood(old && old.mood), text, photos: [], files: [], ts, createdAt: old ? old.createdAt : now, updatedAt: now,
-    place: '', lat: null, lon: null, weather: null, tags: ['주간통계'], fav: old ? !!old.fav : false, meal: null, weeklyStat: { week: mon, nb } };
+    place: '', lat: null, lon: null, weather: null, tags: ['주간통계'], fav: old ? !!old.fav : false, meal: null,
+    weeklyStat: { ...(old && old.weeklyStat && old.weeklyStat.week === mon && old.weeklyStat.brief ? { brief: old.weeklyStat.brief } : {}), week: mon, nb } };   // 통계를 다시 만들어도 AI 주간 브리핑(weeklyStat.brief)은 남겨요
   await DB.put('entries', e); upsertLocal(e); return true;
 }
 function weeklyDialog(preMon) {
@@ -5634,6 +5636,9 @@ document.addEventListener('click', async e => {
     case 'hfNb': H.form.notebook = v; return renderHabitForm();
     case 'hfMore': H.form.more = !H.form.more; return renderHabitForm();
     case 'wkOpen': return weeklyDialog(v || null);
+    case 'wkAi': return wkAiBrief(v);
+    case 'wkAiDel': return wkAiDel(v);
+    case 'wkBriefT': HL.wkBrief = !HL.wkBrief; return renderDetail(true);
     case 'wkSkip': { const topics = weeklyTopics(); wkSkipAdd(topics.map(nb => v + '_' + nb)); return renderWeekBar(); }
     case 'hfCancel': H.form = null; H.editId = null; return renderHabitForm();
     case 'wStart': await ensureWeight(); return renderActive();
@@ -6998,6 +7003,51 @@ function hlWeightListHtml(ser) {
     h += `<div style="margin-top:8px"><button class="btn sm" data-act="hlWOther">+ 다른 날 기록하기</button></div><div class="small muted" style="margin-top:6px">줄을 누르면 고칠 수 있어요. 값을 비우고 확인하면 그날 기록이 지워져요.</div>`;
   }
   return h + '</div>';
+}
+
+/* 건강 주제 주간 통계 글 아래 'AI 건강 주간 브리핑' (2026-11-23) — 누를 때만 받아요. 통계 글 본문은 그대로 두고 글의 weeklyStat.brief에 따로 저장해요(통계를 다시 만들어도 남아요). */
+const WK_AI = { busy: false };
+const wkIsHealth = e => !!e && !!e.weeklyStat && /^(health|건강)$/i.test(String(e.notebook || ''));
+function wkBriefHtml(e) {
+  if (!wkIsHealth(e)) return '';
+  const b = e.weeklyStat.brief;
+  if (WK_AI.busy) return `<div class="hlsect hlb"><div class="small muted">⏳ 한 주 기록을 살펴보고 있어요…</div></div>`;
+  if (!b) return `<div class="hlsect hlb"><div class="row" style="justify-content:space-between;align-items:center"><span class="small muted">${HL_NAME} · 한 주</span><button class="btn sm primary" data-act="wkAi" data-v="${esc(e.id)}">AI 건강 주간 브리핑 받기</button></div></div>`;
+  const open = !!HL.wkBrief, li = a => (a || []).map(x => `<li>${esc(String(x))}</li>`).join('');
+  const fold = `<button class="hlfold ${open ? 'open' : ''}" data-act="wkBriefT"><b>${HL_NAME} · 한 주</b><span class="small muted">${b.from ? esc(hlDate(b.from).replace(/ \(.\)/, '')) : ''}</span><i>${open ? '▴' : '▾'}</i></button>`;
+  if (!open) return `<div class="hlsect hlb">${fold}</div>`;
+  const secs = (b.sections || []).map(x => `<div class="hlsec"><b>${esc(x.title || '')}</b><p>${esc(x.body || '')}</p></div>`).join('');
+  const pri = (b.priority || []).length ? `<div style="margin-top:8px"><b>우선순위</b><ol style="margin:4px 0 0 18px">${(b.priority || []).map(x => `<li>${esc(String(x))}</li>`).join('')}</ol></div>` : '';
+  return `<div class="hlsect hlb">${fold}<div class="small muted hwl" style="margin:6px 0">${b.sum ? esc(b.sum.line) : ''}</div><ul class="hlsum">${li(b.summary)}</ul>${secs}${pri}
+    <div class="row hlacts"><button class="link" data-act="wkAi" data-v="${esc(e.id)}">다시 받기</button><button class="link" data-act="wkAiDel" data-v="${esc(e.id)}" style="color:var(--danger,#c0392b)">지우기</button></div>
+    <div class="small muted" style="margin-top:6px">참고용 · 의학적 조언이 아니에요${b.est ? ' · AI 어림 열량 포함' : ''}</div></div>`;
+}
+async function wkAiBrief(id) {
+  const e = S.entries.find(x => x.id === id); if (!e || !wkIsHealth(e)) return;
+  if (WK_AI.busy || HL.busy) return;
+  if (!geminiKey()) return toast('설정 → AI 식단 사진에서 제미나이 키를 먼저 넣어 주세요', 4000);
+  if (lsGet(HL_BRIEF_KEY) !== '3') { if (!await hlConsent()) return; lsSet(HL_BRIEF_KEY, '3'); }
+  const mon = e.weeklyStat.week, sun = addDays(mon, 6), date = sun > todayStr() ? todayStr() : sun;
+  WK_AI.busy = true; HL.wkBrief = true; if (DT.id === id) renderDetail(true);
+  try {
+    const data = hlBriefData(date);
+    data._corner = HL_CORNERS[0]; data.일요일_주간분석 = true;   // 한 주 돌아보기 형식으로 고정
+    const voice = hlPick(HL_VOICES, []);
+    const txt = await geminiCall([{ text: hlBriefPrompt(data, date, voice, '') }], true, undefined, { temp: 0.9 });
+    let js; try { js = JSON.parse(String(txt).trim().replace(/^```(?:json)?/i, '').replace(/```$/, '').trim()); } catch { throw { code: 'parse' }; }
+    const arr = (x, n = 200, k = 6) => (Array.isArray(x) ? x : x ? [x] : []).map(z => String(z).slice(0, n)).slice(0, k);
+    const summary = arr(js && js.summary).slice(0, 3); if (!summary.length) throw { code: 'parse' };
+    const sections = (Array.isArray(js.sections) ? js.sections : []).filter(x => x && x.title && x.body).slice(0, 7).map(x => ({ title: String(x.title).slice(0, 20), body: String(x.body).slice(0, 700) }));
+    e.weeklyStat.brief = { summary, sections, priority: arr(js.priority, 160, 2), sum: hlSumFrom(data), est: data.오늘_기록.먹은_음식.some(f => /AI추정/.test(f)), at: Date.now(), from: date };
+    await DB.put('entries', e); upsertLocal(e);
+  } catch (err) { toast(aiErrMsg(err), 5000); }
+  finally { WK_AI.busy = false; if (DT.id === id) renderDetail(true); }
+}
+async function wkAiDel(id) {
+  const e = S.entries.find(x => x.id === id); if (!e || !e.weeklyStat || !e.weeklyStat.brief) return;
+  if (!await askConfirm('AI 주간 브리핑을 지울까요?', '통계 글은 그대로 남아요.', '지우기')) return;
+  delete e.weeklyStat.brief; await DB.put('entries', e); upsertLocal(e);
+  if (DT.id === id) renderDetail(true);
 }
 
 /* ==========================================================
