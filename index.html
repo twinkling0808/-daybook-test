@@ -243,6 +243,9 @@ textarea.diary:focus{border:0}
 .tagchip button{color:var(--muted);font-size:12px;width:20px;height:20px;border-radius:50%}
 .tagchip button:hover{color:var(--text);background:var(--hover)}
 .tagsug{display:flex;gap:6px;flex-wrap:wrap}
+.tagedit{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0 8px}
+.tagedit input{flex:1;min-width:130px;border:0;border-bottom:1px solid var(--line);background:none;font-size:15px;padding:6px 2px;color:var(--text);outline:none}
+.tagedit .tagsug{width:100%}
 .tagsug button{font-size:13.5px;color:var(--muted);border:1px dashed var(--line);border-radius:999px;padding:2px 10px}
 .tagsug button:hover{color:var(--link);border-color:var(--link)}
 
@@ -1067,6 +1070,7 @@ body.locked #lock{display:flex}
 
         <div class="moodrow" id="moodRow" hidden></div>
         <div class="mealrow" id="mealRow" hidden></div>
+        <div class="tagedit" id="tagEdit"></div>
 
         <div class="fmtbar" id="fmtbar" role="toolbar" aria-label="글 서식">
           <button data-fmt="h1">제목</button>
@@ -1419,7 +1423,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261123-2';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261123-3';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -2473,6 +2477,7 @@ function tagCounts() {
 function addDraftTag(t) {
   t = cleanTag(t); if (!t) return;
   if (!D.tags.some(x => tagKey(x) === tagKey(t))) D.tags.push(t);
+  const n = $('#tagIn'); if (n) n.value = '';   // 추가하면 입력칸을 비워서 추천 목록이 전체로 보이게
   renderTagEdit();
 }
 function renderTagEdit() {
@@ -2509,7 +2514,7 @@ function renderComposer() {
   $('#composer').style.setProperty('--nc', nbColor(D.notebook));
   $('#btnSave').textContent = D.editId ? '수정 저장' : '기록하기';
   renderInfoLine();
-  renderMoodRow(); renderMealRow(); renderPhotoPrev();
+  renderMoodRow(); renderMealRow(); renderTagEdit(); renderPhotoPrev();
 }
 /* 글쓰기 화면의 기분 고르기: 얼굴 버튼 하나만 보이고, 누르면 8개가 펼쳐졌다가 고르면 접혀요 (설정에서 끌 수 있어요) */
 let moodOpen = false;
