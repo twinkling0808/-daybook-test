@@ -1429,7 +1429,7 @@ const MOOD_LEGACY = { '기쁨': '행복', '설렘': '행복', '감사': '행복'
   '무던함': '무던', '보통': '무던', '심심함': '무던', '멍함': '무던', '바쁨': '무던', '그저 그런 날': '무던',
   '우울·슬픔': '슬픔', '우울': '슬픔', '외로움': '슬픔', '공허': '슬픔', '불안': '슬픔',
   '분노·짜증': '짜증', '분노': '짜증', '화남': '짜증', '지침·번아웃': '지침', '번아웃': '지침' };
-const APP_VER='20261123-8';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
+const APP_VER='20261128-1';   // 설정 맨 아래 '앱 정보'에 보이는 판 번호 — 배포 zip 번호와 맞춰서 빌드 전에 고쳐요
 const normMood = m => !m ? null : MOODS[m] ? m : (MOOD_LEGACY[m] || null);
 
 /* ==========================================================
@@ -6936,13 +6936,13 @@ async function hlBriefDiary(date) {
 const hlConsent = () => askConfirm('건강 숫자가 구글로 가요', '‘받기’를 누를 때만, 그 날과 최근 7일의 먹은 음식 이름·열량·영양 숫자, 체중 기록, BMI 숫자, 습관 달성 여부와 이름·설명을 구글(제미나이)로 보내요.\n키·이름·일기 본문·사진·장소는 보내지 않아요.\n무료 키는 보낸 내용을 구글이 서비스 개선에 쓸 수 있어요.\n받은 어드바이스는 이 폰과 백업에 저장돼요.', '동의하고 켜기');
 /* 요일별 코너 — 여기 목록만 고치면 코너 이름·내용이 바뀌어요(일요일은 한 주 분석) */
 const HL_CORNERS = [
-  { name: '한 주 돌아보기', ask: '지난 7일을 길게 분석해요(에너지 수지·영양 균형·체중 추세·식사 패턴·습관과 활동을 각각 한 문단). 칭찬할 점 하나와 다음 주에 바꿀 것 하나로 마무리해요.' },   // 일
+  { name: '한 주 돌아보기', ask: '지난 7일을 길게 분석해요(에너지 수지·영양 균형·체중 추세·식사 패턴·습관과 활동을 각각 한 문단). 잘 되는 점 하나(짧게)와 다음 주에 바꿀 것 하나로 마무리해요.' },   // 일
   { name: '이번 주 작은 목표', ask: '이번 주에 해 볼 작은 목표를 하나만 제안해요. 지난 기록에서 가장 쉬워 보이는 것으로, 한 문장으로 구체적으로요.' },   // 월
   { name: '영양 한 입 지식', ask: '오늘 먹은 음식과 관련된 영양 이야기를 한 가지만 짧게 해요(예: 단백질·식이섬유·수분). 기록에 없는 음식은 말하지 않아요.' },   // 화
-  { name: '오늘의 한 끼 칭찬', ask: '오늘 기록 중 잘한 한 끼나 한 선택을 골라 구체적으로 칭찬해요. 숫자 평가보다 선택의 이유를 말해요.' },   // 수
+  { name: '오늘의 한 끼 읽기', ask: '오늘 기록 중 한 끼(또는 한 선택)를 골라 숫자나 음식 이름으로 구체적으로 짚고, 내일 바꿔 볼 작은 조정 하나를 말해요. 잘한 점은 한 마디면 충분해요.' },   // 수
   { name: '체중 숫자 읽기', ask: '체중 기록이 있으면 하루 오르내림은 정상이라는 점과 7일 평균 흐름을 쉽게 풀어 줘요. 기록이 부족하면 어떻게 재면 좋은지 한 줄만 말해요.' },   // 목
   { name: '주말 대비 한마디', ask: '곧 올 주말의 식사 자리나 간식을 가볍게 대비하는 방법을 하나만 제안해요. 참는 방식이 아니라 나누는 방식으로요.' },   // 금
-  { name: '한 주 꾸준함 칭찬', ask: '이번 주 기록을 남긴 날수와 습관을 한 날수를 칭찬해요. 열량 숫자가 아니라 꾸준히 기록한 것 자체를 높이 평가해요.' }   // 토
+  { name: '한 주 기록 읽기', ask: '이번 주 기록에서 가장 두드러진 흐름 하나(가장 많이·적게 먹은 날, 쏠린 끼니, 반복된 음식 등)를 숫자로 짚고, 다음 주에 바꿔 볼 것 하나로 마무리해요. 기록을 남긴 것 자체는 칭찬하지 않아요.' }   // 토
 ];
 /* 하루 열량 기준(앱이 계산해서 숫자만 보내요): 정한 목표 > 목표 체중과 비교 > 일반 성인 기준 */
 function hlKcalRef(ser) {
@@ -6968,6 +6968,15 @@ function hlBriefData(date) {
   const w7 = m(addDays(date, -7), date), wPrev = m(addDays(date, -14), addDays(date, -7)), pace = hlPace(ser, date);
   const bmi = last && hcm ? Math.round(last.v / ((hcm / 100) ** 2) * 10) / 10 : null;
   const T = date, dow = fromYmd(date).getDay(), corner = HL_CORNERS[dow];
+  /* 2026-11-28: 칭찬만 되풀이하지 않게 — 구체적으로 짚을 거리(자주 먹은 음식·평균과의 차이·최근 흐름)를 앱이 먼저 계산해서 같이 보내요 */
+  const nameDays = {}; days.forEach(d => { new Set(d.foods.map(f => f.name)).forEach(nm => { nameDays[nm] = (nameDays[nm] || 0) + 1; }); });
+  const topFoods = Object.entries(nameDays).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([nm, n]) => ({ 음식: nm, 먹은_날수: n }));
+  const others = rec.filter(d => d.date !== t.date), oAvg = others.length >= 3 ? Math.round(others.reduce((s, d) => s + d.kcal, 0) / others.length) : null;
+  const sortedK = rec.length >= 3 ? rec.slice().sort((a, b) => a.kcal - b.kcal) : [], dk = d => ({ 날짜: d.date.slice(5), 요일: DOW[fromYmd(d.date).getDay()], 열량: d.kcal });
+  const k3v = d14.slice(11).filter(d => d.kcal).map(d => d.kcal), pm = d14.slice(7, 11).filter(d => d.kcal).map(d => d.kcal);
+  const k3Avg = k3v.length >= 2 ? k3v.reduce((a, b) => a + b, 0) / k3v.length : null, pAvg = pm.length >= 2 ? pm.reduce((a, b) => a + b, 0) / pm.length : null;
+  const dir = k3Avg && pAvg ? (k3Avg > pAvg * 1.1 ? '오르는 중' : k3Avg < pAvg * 0.9 ? '내리는 중' : '비슷함') : null;
+  const lowPro = days.filter(d => d.kcal > 600 && d.p * 4 / ((d.c * 4 + d.p * 4 + d.f * 9) || 1) < 0.12).length;
   /* 특이사항 — 앱이 기준(숫자)으로 먼저 걸러서 알려 줘요 */
   const flags = [];
   if (t.kcal) {
@@ -6975,6 +6984,9 @@ function hlBriefData(date) {
     const tk = t.c * 4 + t.p * 4 + t.f * 9; if (tk > 0) { const pf = t.f * 9 / tk * 100, pcb = t.c * 4 / tk * 100, pp = t.p * 4 / tk * 100; if (pf >= 40) flags.push(`오늘 지방 비율이 ${Math.round(pf)}%로 높아요`); if (pcb >= 68) flags.push(`오늘 탄수 비율이 ${Math.round(pcb)}%로 쏠렸어요`); if (pp < 10 && t.kcal > 600) flags.push(`오늘 단백질 비율이 ${Math.round(pp)}%로 낮아요`); }
     const ev = (t.meals['저녁'] || 0) / t.kcal; if (ev >= .55 && t.kcal > 800) flags.push(`저녁에 열량의 ${Math.round(ev * 100)}%가 몰렸어요`);
   }
+  const topF = topFoods[0]; if (topF && topF.먹은_날수 >= 5) flags.push(`‘${topF.음식}’을(를) 최근 7일 중 ${topF.먹은_날수}일 먹었어요`);
+  if (t.kcal && oAvg) { const dv = Math.round((t.kcal / oAvg - 1) * 100); if (dv >= 25) flags.push(`오늘 열량이 최근 평균보다 ${dv}% 많아요`); else if (dv <= -25 && t.kcal / ref.기준_열량 > .6) flags.push(`오늘 열량이 최근 평균보다 ${-dv}% 적어요`); }
+  if (lowPro >= 4) flags.push(`최근 7일 중 ${lowPro}일은 단백질 비율이 낮았어요`);
   if (pace != null && Math.abs(pace) > 1) flags.push(`체중 변화가 주당 ${pace > 0 ? '+' : '−'}${Math.abs(pace)}kg로 빨라요`);
   const prev = [1, 2, 3].map(i => S.health.briefs[addDays(date, -i)]).filter(Boolean).map(b => ({ 한줄: (b.summary || [])[0] || '', 코너: b.corner || '', 말투: b.voice || '', 내일행동: b.tomorrow || '', 본문_첫문장: String((b.sections && b.sections[0] && b.sections[0].body) || '').split(/(?<=[.요!?])\s/)[0].slice(0, 60) })), weekAgo = S.health.briefs[addDays(date, -7)];
   return {
@@ -6986,6 +6998,10 @@ function hlBriefData(date) {
       열량비율_퍼센트: mk ? { 탄수: mp((avgC || 0) * 4), 단백질: mp((avgP || 0) * 4), 지방: mp((avgF || 0) * 9) } : null,
       끼니_비중_퍼센트: tot ? { 아침: pc('아침'), 점심: pc('점심'), 저녁: pc('저녁'), 간식: pc('간식'), 음료: pc('음료') } : null,
       습관_모두_한_날수: days.filter(d => d.hTotal && d.hDone === d.hTotal).length, 습관_해당_날수: days.filter(d => d.hTotal).length, 활동_기록_날수: days.filter(d => d.act).length },
+    최근_7일_음식: topFoods,
+    오늘_vs_평균: t.kcal && oAvg ? { 오늘_열량: t.kcal, 오늘_제외_평균_열량: oAvg, 차이_퍼센트: Math.round((t.kcal / oAvg - 1) * 100) } : null,
+    열량_흐름: dir ? { 최근3일_평균: Math.round(k3Avg), 그전_평균: Math.round(pAvg), 방향: dir } : null,
+    가장_많이_먹은_날: sortedK.length ? dk(sortedK[sortedK.length - 1]) : null, 가장_적게_먹은_날: sortedK.length ? dk(sortedK[0]) : null,
     체중: wh ? { 최근_kg: last ? Math.round(last.v * 10) / 10 : null, 최근7일_평균_kg: w7, 직전7일_평균_kg: wPrev, 주당_변화_kg: pace, '14일_기록수': ser.filter(p => p.d > addDays(date, -14)).length,
       목표_kg: wh.goalValue ? Math.round(wh.goalValue * 10) / 10 : null, 목표까지_kg: last && wh.goalValue ? Math.round((last.v - wh.goalValue) * 10) / 10 : null, BMI: bmi, 체중당_단백질_g: last && avgP ? Math.round(avgP / last.v * 100) / 100 : null } : null,
     최근_어드바이스_한줄: prev, 지난주_같은요일: weekAgo ? { 코너: weekAgo.corner || '', 한줄: (weekAgo.summary || [])[0] || '' } : null,
@@ -7010,16 +7026,16 @@ const HL_ANGLES = ['식사 시간대와 간격', '단백질', '채소·식이섬
 const hlPick = (arr, used) => { const left = arr.filter(x => !used.includes(x)); const a = left.length ? left : arr; return a[Math.floor(Math.random() * a.length)]; };
 function hlBriefPrompt(data, date, voice, angle) {
   const corner = data._corner, sun = data.일요일_주간분석; delete data._corner;
-  return `당신은 비만 관리를 전문으로 하는 영양 코치예요. 오늘의 기록을 보고 짧게 응원하고, 필요할 때만 짚어 주는 사람이에요. 아래는 한국 성인 한 분의 ${date === todayStr() ? '오늘' : date + ' 기준'} 기록 요약이에요(기준일까지의 기록만 근거로 삼아요). 열량·영양은 사진 AI나 어림값이라 오차가 있을 수 있어요.
+  return `당신은 비만 관리를 전문으로 하는 영양 코치예요. 오늘의 기록을 읽고 눈에 띄는 점을 구체적으로 짚어 주는 사람이에요. 칭찬은 짧은 한 마디면 충분해요. 아래는 한국 성인 한 분의 ${date === todayStr() ? '오늘' : date + ' 기준'} 기록 요약이에요(기준일까지의 기록만 근거로 삼아요). 열량·영양은 사진 AI나 어림값이라 오차가 있을 수 있어요.
 말투: 존댓말 "~요"체. 오늘의 말씀 스타일은 「${voice}」예요 — 이 스타일로 표현과 문장 구조를 새로 지어 쓰고, 안전 규칙과 사실은 그대로 지켜요. 훈계·죄책감을 주는 말은 쓰지 않아요. 매번 같은 틀(같은 시작·같은 비유·같은 마무리 문구)로 쓰지 않아요 — 지루하지 않게 오늘만의 표현을 써요. 활동(운동·산책)은 열량 판단에 쓰지 않고, 한 일을 단순히 되풀이해 말하지도 않아요. 다만 \"최근_7일_요약.활동_기록_날수\"가 0~1일이면 가벼운 활동(예: 10~20분 걷기)을 부담 없이 한 번 권해요. "최근_어드바이스_한줄"과 "지난주_같은요일"에 나온 첫 문장·비유·마무리·내일 행동·말투와 겹치지 않게 전혀 다른 표현으로 써요.${sun ? '' : ` 오늘의 각도는 「${angle}」이에요 — 기록에 근거가 있을 때만 그 각도를 중심으로 말하고, 근거가 없으면 기록에 있는 다른 각도로 바꿔요.`}
 화면 맨 위에 앱이 계산한 "최근 7일 요약"(평균 열량·탄단지 비율·습관·활동·체중 변화)이 이미 붙어요 — 그 숫자를 그대로 되풀이하지 말고, 의미와 다음 행동만 말해요. 습관의 "설명"은 그 습관의 구체적인 내용(예: 운동 종류)이니 활동을 말할 때 참고해요.
 "기록_적음"이 true면(식단 기록 3일 미만) 길게 쓰지 말고 summary 한두 줄과 아주 짧은 본문으로, 흐름을 단정하지 말고 오늘 빠진 기록 한 가지(예: 점심 사진 한 장)만 부담 없이 짚어요.
 오늘의 코너: 「${corner.name}」 — ${corner.ask}
 기준 열량은 데이터의 "열량_기준"을 써요(종류를 한 번만 "일반 기준"이라고 밝혀요). 열량이 기준의 90~110%면 지킨 걸로 보고, 열량 판단에 활동량은 쓰지 않아요(몸 상태를 모르니 강한 운동은 권하지 않아요). 단백질은 체중 1kg당 1.0~1.6g, 열량 비율은 탄수 45~60%·단백질 15~25%·지방 20~35%가 보통이에요. BMI는 한국 기준(18.5~22.9 정상, 23~24.9 과체중, 25 이상 비만)으로 보되 단정하지 않아요. 체중 변화는 주당 −0.25~−1.0kg이면 완만해요.
-응원할 때는 숫자보다 "기록을 남긴 것"과 "꾸준함"을 칭찬해요. "특이사항"이 비어 있으면 평소처럼 응원과 코너만 쓰고, 채워져 있으면 그 점을 한두 문장으로 짚고 내일 할 행동을 하나 제안해요.
+칭찬은 한 문장 이내로, 숫자나 음식 선택에 근거가 있을 때만 해요. "기록을 꾸준히 남겼어요"처럼 기록한 행위 자체를 칭찬하지 않아요(기록은 당연한 전제예요). 대신 매번 데이터에서 구체적인 관찰 하나(숫자나 음식 이름을 넣어서)와 작은 행동 하나를 말해요. "특이사항"이 있으면 그 점을 먼저 짚고, 비어 있어도 "최근_7일_음식"·"오늘_vs_평균"·"열량_흐름"·"가장_많이_먹은_날"·"가장_적게_먹은_날"에서 눈에 띄는 점 하나를 골라 짚어요. 좋은 점은 과장 없이 사실대로 담담하게 적고, "최근_어드바이스_한줄"에서 이미 한 칭찬은 반복하지 않아요.
 안전 규칙: 극단적인 감량, 굶기, 하루 1,200kcal 미만 권유, 과도한 운동을 절대 권하지 않아요. 진단·치료·약·보충제 권유는 하지 않고, 몸이 불편하면 전문가와 상의하라고만 해요. 기록이 적으면(식단 3일 미만, 체중 3개 미만) 단정하지 말고 무엇을 더 기록하면 되는지 말해요. (AI추정)이 섞여 있으면 어림값이라는 점을 한 번만 말해요. 없는 숫자를 지어내지 않아요.
 JSON만 답해요. 형식:
-{"summary":["오늘의 응원 한 줄(45자 안팎)", "특이사항이 있을 때만 짚는 한 줄(45자 안팎, 없으면 이 항목 생략)"],"sections":[${sun ? '{"title":"에너지 수지","body":"150~250자"},{"title":"영양 균형","body":"…"},{"title":"체중 추세","body":"…"},{"title":"식사 패턴","body":"…"},{"title":"습관·활동","body":"습관을 한 날수와 활동 기록 날수를 칭찬과 함께 짚고, 활동이 적으면 가벼운 걷기를 권해요"}' : `{"title":"${corner.name}","body":"2~3문장, 100~160자"}`}],"tomorrow":"${sun ? '다음 주에 바꿀 것 하나(60자 안팎)' : '특이사항이 있을 때만 내일 할 행동 하나(60자 안팎), 없으면 빈 문자열'}","teaser":"내일 코너를 궁금하게 하는 예고 한 줄(30자 안팎)"}
+{"summary":["오늘 기록에서 읽은 핵심 한 줄(관찰 중심, 숫자나 음식 이름 포함, 45자 안팎)", "특이사항이 있을 때만 짚는 한 줄(45자 안팎, 없으면 이 항목 생략)"],"sections":[${sun ? '{"title":"에너지 수지","body":"150~250자"},{"title":"영양 균형","body":"…"},{"title":"체중 추세","body":"…"},{"title":"식사 패턴","body":"…"},{"title":"습관·활동","body":"습관을 한 날수와 활동 기록 날수를 사실대로 짚고, 활동이 적으면 가벼운 걷기를 권해요"}' : `{"title":"${corner.name}","body":"관찰→의미→행동 순서로 2~3문장, 100~160자"}`}],"tomorrow":"${sun ? '다음 주에 바꿀 것 하나(60자 안팎)' : '내일 해 볼 작은 행동 하나(60자 안팎)'}","teaser":"내일 코너를 궁금하게 하는 예고 한 줄(30자 안팎)"}
 내일 코너는 「${HL_CORNERS[(fromYmd(date).getDay() + 1) % 7].name}」이에요.
 데이터: ${JSON.stringify(data)}`;
 }
